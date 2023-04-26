@@ -1,8 +1,7 @@
 name: "ronin"
 scale_along_z: 0
 embedded_instances {
-  id: "ronin"
-  children: "camera"
+  id: "knight"
   data: "components {\n"
   "  id: \"player\"\n"
   "  component: \"/game/characters/player.script\"\n"
@@ -35,8 +34,8 @@ embedded_instances {
   "  shapes {\\n"
   "    shape_type: TYPE_SPHERE\\n"
   "    position {\\n"
-  "      x: 2.0\\n"
-  "      y: 3.0\\n"
+  "      x: -1.0\\n"
+  "      y: -17.0\\n"
   "      z: 0.0\\n"
   "    }\\n"
   "    rotation {\\n"
@@ -48,7 +47,24 @@ embedded_instances {
   "    index: 0\\n"
   "    count: 1\\n"
   "  }\\n"
-  "  data: 9.3435\\n"
+  "  shapes {\\n"
+  "    shape_type: TYPE_SPHERE\\n"
+  "    position {\\n"
+  "      x: -1.0\\n"
+  "      y: -1.0\\n"
+  "      z: 0.0\\n"
+  "    }\\n"
+  "    rotation {\\n"
+  "      x: 0.0\\n"
+  "      y: 0.0\\n"
+  "      z: 0.0\\n"
+  "      w: 1.0\\n"
+  "    }\\n"
+  "    index: 1\\n"
+  "    count: 1\\n"
+  "  }\\n"
+  "  data: 10.4075\\n"
+  "  data: 5.7645\\n"
   "}\\n"
   "linear_damping: 0.0\\n"
   "angular_damping: 0.0\\n"
@@ -70,8 +86,8 @@ embedded_instances {
   "embedded_components {\n"
   "  id: \"sprite\"\n"
   "  type: \"sprite\"\n"
-  "  data: \"tile_set: \\\"/assets/images/ronin/ronin_animations.tilesource\\\"\\n"
-  "default_animation: \\\"idle\\\"\\n"
+  "  data: \"tile_set: \\\"/assets/images/characters/knight/knight.tilesource\\\"\\n"
+  "default_animation: \\\"jump\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
   "blend_mode: BLEND_MODE_ALPHA\\n"
   "playback_rate: 0.5\\n"
@@ -92,49 +108,6 @@ embedded_instances {
   position {
     x: 0.0
     y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-embedded_instances {
-  id: "camera"
-  data: "embedded_components {\n"
-  "  id: \"camera\"\n"
-  "  type: \"camera\"\n"
-  "  data: \"aspect_ratio: 1.0\\n"
-  "fov: 0.7854\\n"
-  "near_z: 0.1\\n"
-  "far_z: 1000.0\\n"
-  "auto_aspect_ratio: 0\\n"
-  "orthographic_projection: 0\\n"
-  "orthographic_zoom: 1.0\\n"
-  "\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
-  "}\n"
-  ""
-  position {
-    x: -480.0
-    y: -320.0
     z: 0.0
   }
   rotation {

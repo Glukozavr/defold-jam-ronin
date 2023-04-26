@@ -1,9 +1,11 @@
 [project]
-title = Platformer game
+title = Fight Shadow High
 developer = gkzr.me
+dependencies#0 = https://github.com/britzl/defold-orthographic/archive/refs/tags/3.2.1.zip
 
 [bootstrap]
-main_collection = /game/levels/wild_field.collectionc
+main_collection = /game/levels/village.collectionc
+render = /orthographic/render/orthographic.renderc
 
 [input]
 game_binding = /input/game.input_bindingc
@@ -12,6 +14,7 @@ use_accelerometer = 0
 [display]
 width = 960
 height = 640
+fullscreen = 0
 
 [ios]
 app_icon_120x120 = /assets/app_icons/icon_120.png

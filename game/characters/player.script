@@ -4,11 +4,11 @@
 -- acceleration factor to use when air-borne
 local air_acceleration_factor = 0.8
 -- max speed right/left
-local max_speed = 450
+local max_speed = 100
 -- gravity pulling the player down in pixel units
-local gravity = -1900
+local gravity = -800
 -- take-off speed when jumping in pixel units
-local jump_takeoff_speed = 1200
+local jump_takeoff_speed = 200
 
 
 -- pre-hashing ids improves performance
@@ -27,10 +27,6 @@ local anim_fall = hash("fall")
 function init(self)
 	-- this lets us handle input in this script
 	msg.post(".", "acquire_input_focus")
-
-	-- activate camera attached to the player collection
-	-- this will send camera updates to the render script
-	msg.post("camera", "acquire_camera_focus")
 
 	-- initial player velocity
 	self.velocity = vmath.vector3(0, 0, 0)
