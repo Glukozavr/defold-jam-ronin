@@ -1,0 +1,68 @@
+-- Shadow Logic
+
+-- Shadow is an enemy in Fight Shadow High
+-- What is does is detecting the player, coming to him triggering the start of a fight
+-- After that - participate in a fight
+
+local e = require "game.events"
+local fight_distance = 30
+
+local anim_walk = hash("run")
+local anim_idle = hash("idle")
+local anim_jump = hash("jump")
+local anim_fall = hash("fall")
+
+local function play_animation(self, anim)
+	-- only play animations which are not already playing
+	if self.anim ~= anim then
+		-- tell the sprite to play the animation
+		sprite.play_flipbook("#sprite", anim)
+		-- remember which animation is playing
+		self.anim = anim
+	end
+end
+
+local function approached(self, url, property)
+	play_animation(self, anim_idle)
+	msg.post("/manager", e.EVENTS.READY)
+end
+
+local function approach(self, position)
+	local local_pos = go.get_position(".")
+	local dir = 1
+	if local_pos.x < position.x then
+		dir = -1
+	end
+
+	play_animation(self, anim_walk)
+	go.animate(".", "position.x", go.PLAYBACK_ONCE_FORWARD, (position.x + dir * fight_distance), go.EASING_LINEAR, 1, 0, approached)
+end
+
+function init(self)
+	msg.post("/manager", e.EVENTS.ENEMY_AWAKEN)
+
+	-- the currently playing animation
+	self.anim = anim_idle
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id==e.EVENTS.FIGHT then
+		print("BUSTED! Now I will do bad things to you!")
+	elseif message_id==e.EVENTS.DISCOVERY then
+		print("What a beautiful day!")
+	elseif message_id==e.EVENTS.APPROACH then
+		approach(self, message.position)
+	end
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

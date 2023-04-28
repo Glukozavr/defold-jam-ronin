@@ -1,0 +1,71 @@
+-- Manager or game manager Logic
+
+-- Manager is responsible for keeping the game state and do transitions
+-- For example, turn on discovery mode on start and battle mode on detection
+-- and back to discovery if battle is won, or end the game is failed
+
+local camera = require "orthographic.camera"
+local e = require "game.events"
+
+local discovery_state = hash("discovery")
+local fight_state = hash("fight")
+local state = discovery_state
+local discovery_zoom = 3
+local fight_zoom = 3.5
+
+local function is_enemy_legit(self, enemies, enemy_url)
+	local is_legit = false
+	for i,line in ipairs(enemies) do
+		if line==enemy_url then
+			is_legit = true
+		end
+	end
+	return is_legit
+end
+
+local function update_entity_state(self, entity_id)
+	if state==discovery_state then
+		msg.post(entity_id, e.EVENTS.DISCOVERY)
+	else
+		msg.post(entity_id, e.EVENTS.FIGHT)
+	end
+end
+
+function init(self)
+	self.enemies = {}
+	self.player = nil
+	self.fighter = nil
+
+	state = discovery_state
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id==e.EVENTS.PLAYER_BORN then
+		print("player_found", sender)
+		self.player = sender
+		update_entity_state(self, sender)
+	elseif message_id==e.EVENTS.ENEMY_AWAKEN then
+		print("enemy_awaken", sender)
+		table.insert(self.enemies, sender)
+		update_entity_state(self, sender)
+	elseif message_id==e.EVENTS.DETECTED then
+		if is_enemy_legit(self, self.enemies, message.shadow_url) and state==discovery_state then
+			print("That won't be pretty...")
+			state = fight_state
+			self.fighter = message.shadow_url
+			update_entity_state(self, self.player)
+			update_entity_state(self, self.fighter)
+			msg.post(message.shadow_url, e.EVENTS.APPROACH, { position=go.get_position(self.player) })
+		end
+	elseif message_id==e.EVENTS.READY then
+		if sender==self.fighter then
+			print("Fighters are ready!")
+			local player_pos = go.get_position(self.player).x
+			local center_pos = (player_pos + go.get_position(self.fighter).x) / 2
+			local offset = center_pos - player_pos
+			print("The offset should be", offset)
+			msg.post("camera", camera.MSG_ZOOM_TO, { zoom = fight_zoom })
+			msg.post("camera", camera.MSG_FOLLOW_OFFSET, { offset = vmath.vector3(offset, 0, 0) })
+		end
+	end
+end

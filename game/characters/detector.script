@@ -1,0 +1,15 @@
+local e = require "game.events"
+
+function init(self)
+	self.detected = false
+	self.shadow_url = msg.url("shadow#shadow")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("collision_response") then
+		if not self.detected then
+			self.detected = true
+			msg.post("/manager", e.EVENTS.DETECTED, { shadow_url = self.shadow_url })
+		end
+	end
+end

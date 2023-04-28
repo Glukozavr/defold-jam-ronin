@@ -23,10 +23,11 @@ local anim_idle = hash("idle")
 local anim_jump = hash("jump")
 local anim_fall = hash("fall")
 
+local e = require "game.events"
 
 function init(self)
 	-- this lets us handle input in this script
-	msg.post(".", "acquire_input_focus")
+	msg.post("/manager", e.EVENTS.PLAYER_BORN)
 
 	-- initial player velocity
 	self.velocity = vmath.vector3(0, 0, 0)
@@ -127,6 +128,13 @@ function on_message(self, message_id, message, sender)
 		if message.group == group_obstacle then
 			handle_obstacle_contact(self, message.normal, message.distance)
 		end
+	elseif message_id==e.EVENTS.DISCOVERY then
+		msg.post(".", "acquire_input_focus")
+		print("I always wanted to see the world")
+	elseif message_id==e.EVENTS.FIGHT then
+		msg.post(".", "release_input_focus")
+		print("I am so angry!")
+		self.velocity.x = 0;
 	end
 end
 
