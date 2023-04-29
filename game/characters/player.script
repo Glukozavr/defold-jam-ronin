@@ -22,12 +22,13 @@ local anim_walk = hash("run")
 local anim_idle = hash("idle")
 local anim_jump = hash("jump")
 local anim_fall = hash("fall")
+local manager = hash("/managers/manager")
 
 local e = require "game.events"
 
 function init(self)
 	-- this lets us handle input in this script
-	msg.post("/manager", e.EVENTS.PLAYER_BORN)
+	msg.post(manager, e.EVENTS.PLAYER_BORN)
 
 	-- initial player velocity
 	self.velocity = vmath.vector3(0, 0, 0)

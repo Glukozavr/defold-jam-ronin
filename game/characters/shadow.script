@@ -11,6 +11,7 @@ local anim_walk = hash("run")
 local anim_idle = hash("idle")
 local anim_jump = hash("jump")
 local anim_fall = hash("fall")
+local manager = hash("/managers/manager")
 
 local function play_animation(self, anim)
 	-- only play animations which are not already playing
@@ -24,7 +25,7 @@ end
 
 local function approached(self, url, property)
 	play_animation(self, anim_idle)
-	msg.post("/manager", e.EVENTS.READY)
+	msg.post(manager, e.EVENTS.READY)
 end
 
 local function approach(self, position)
@@ -39,7 +40,7 @@ local function approach(self, position)
 end
 
 function init(self)
-	msg.post("/manager", e.EVENTS.ENEMY_AWAKEN)
+	msg.post(manager, e.EVENTS.ENEMY_AWAKEN)
 
 	-- the currently playing animation
 	self.anim = anim_idle

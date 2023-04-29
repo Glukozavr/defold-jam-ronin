@@ -2,9 +2,10 @@
 title = Fight Shadow High
 developer = gkzr.me
 dependencies#0 = https://github.com/britzl/defold-orthographic/archive/refs/tags/3.2.1.zip
+dependencies#1 = https://github.com/Insality/druid/archive/master.zip
 
 [bootstrap]
-main_collection = /game/levels/village.collectionc
+main_collection = /game/game.collectionc
 render = /orthographic/render/orthographic.renderc
 
 [input]
