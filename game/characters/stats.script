@@ -1,0 +1,83 @@
+-- Stats Logic
+
+-- Stats include character properties used for a fight
+
+local hp_bar = "#health_sprite"
+local stamina_bar = "#stamina_sprite"
+local health_animations = {}
+health_animations[0] = hash("hp_0")
+health_animations[1] = hash("hp_10")
+health_animations[2] = hash("hp_20")
+health_animations[3] = hash("hp_30")
+health_animations[4] = hash("hp_40")
+health_animations[5] = hash("hp_50")
+health_animations[6] = hash("hp_60")
+health_animations[7] = hash("hp_70")
+health_animations[8] = hash("hp_80")
+health_animations[9] = hash("hp_90")
+health_animations[10] = hash("hp_100")
+
+local stamina_animations = {}
+stamina_animations[0] = hash("stamina_0")
+stamina_animations[1] = hash("stamina_10")
+stamina_animations[2] = hash("stamina_20")
+stamina_animations[3] = hash("stamina_30")
+stamina_animations[4] = hash("stamina_40")
+stamina_animations[5] = hash("stamina_50")
+stamina_animations[6] = hash("stamina_60")
+stamina_animations[7] = hash("stamina_70")
+stamina_animations[8] = hash("stamina_80")
+stamina_animations[9] = hash("stamina_90")
+stamina_animations[10] = hash("stamina_100")
+
+local e = require "game.events"
+
+local function show()
+	msg.post(hp_bar, "enable")
+	msg.post(stamina_bar, "enable")
+end
+
+local function hide()
+	msg.post(hp_bar, "disable")
+	msg.post(stamina_bar, "disable")
+end
+
+local function update_hp(value)
+	if value > 10 then
+		value = 1
+	elseif value < 0 then
+		value = 0
+	end
+
+	local anim = health_animations[value]
+	sprite.play_flipbook(hp_bar, anim)
+end
+
+local function update_stamina(value)
+	if value > 10 then
+		value = 1
+	elseif value < 0 then
+		value = 0
+	end
+	
+	local anim = stamina_animations[value]
+	sprite.play_flipbook(stamina_bar, anim)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == e.EVENTS.SHOW_STATS then
+		show()
+	elseif message_id == e.EVENTS.HIDE_STATS then
+		hide()
+	elseif message_id == e.EVENTS.RESET_STATS then
+		if message.resetHealth then
+			update_hp(10)
+		end
+		if message.resetStamina then
+			update_stamina(10)
+		end
+	elseif message_id == e.EVENTS.UPDATE_STATS then
+		update_hp(message.health)
+		update_stamina(message.stamina)
+	end
+end

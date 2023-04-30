@@ -1,41 +1,29 @@
+local fight_text
+local fight_presentation_active = false
+local fight_presentation_duration_cape = 2
+local fight_presentation_duration = 0
+
+local e = require "game.events"
+
 function init(self)
-	-- Add initialization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	fight_text = gui.get_node("fight_text")
+	gui.set_enabled(fight_text, false)
 end
 
 function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Learn more: https://defold.com/manuals/message-passing/
-	-- Remove this function if not needed
+	if message_id==e.EVENTS.FIGHT then
+		gui.set_enabled(fight_text, true)
+		fight_presentation_duration = fight_presentation_duration_cape
+		fight_presentation_active = true
+	end
 end
 
-function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
+function update(self, dt)
+	if fight_presentation_active==true then
+		fight_presentation_duration = fight_presentation_duration - dt
+		if fight_presentation_duration<0 then
+			fight_presentation_active = false
+			gui.set_enabled(fight_text, false)
+		end
+	end
 end

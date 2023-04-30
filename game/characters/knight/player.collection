@@ -1,29 +1,8 @@
-name: "enemy"
+name: "player"
 instances {
-  id: "shadow"
-  prototype: "/game/characters/shadow/shadow.go"
-  children: "detector"
+  id: "knight"
+  prototype: "/game/characters/knight/knight.go"
   children: "stats"
-  position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "detector"
-  prototype: "/game/characters/shadow/detector.go"
   position {
     x: 0.0
     y: 0.0

@@ -23,6 +23,7 @@ local anim_idle = hash("idle")
 local anim_jump = hash("jump")
 local anim_fall = hash("fall")
 local manager = hash("/managers/manager")
+local stats = "stats"
 
 local e = require "game.events"
 
@@ -131,10 +132,13 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id==e.EVENTS.DISCOVERY then
 		msg.post(".", "acquire_input_focus")
+		msg.post(stats, e.EVENTS.HIDE_STATS)
 		print("I always wanted to see the world")
 	elseif message_id==e.EVENTS.FIGHT then
 		msg.post(".", "release_input_focus")
 		print("I am so angry!")
+		msg.post(stats, e.EVENTS.RESET_STATS, { resetHealth = false, resetStamina = true })
+		msg.post(stats, e.EVENTS.SHOW_STATS)
 		self.velocity.x = 0;
 	end
 end

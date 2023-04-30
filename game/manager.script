@@ -66,6 +66,7 @@ function on_message(self, message_id, message, sender)
 			print("The offset should be", offset)
 			msg.post("/camera", camera.MSG_ZOOM_TO, { zoom = fight_zoom })
 			msg.post("/camera", camera.MSG_FOLLOW_OFFSET, { offset = vmath.vector3(offset, 0, 0) })
+			msg.post("/interface", e.EVENTS.FIGHT)
 		end
 	end
 end

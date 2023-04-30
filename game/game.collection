@@ -1,25 +1,5 @@
 name: "game"
 instances {
-  id: "knight"
-  prototype: "/game/characters/knight/knight.go"
-  position {
-    x: 90.0
-    y: 108.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
   id: "camera"
   prototype: "/orthographic/camera.go"
   position {
@@ -57,7 +37,7 @@ instances {
     }
     properties {
       id: "follow_target"
-      value: "/knight"
+      value: "/player/knight"
       type: PROPERTY_TYPE_HASH
     }
     properties {
@@ -73,6 +53,11 @@ instances {
     properties {
       id: "bounds_top"
       value: "1000.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "deadzone_top"
+      value: "20.0"
       type: PROPERTY_TYPE_NUMBER
     }
   }
@@ -142,4 +127,61 @@ collection_instances {
     z: 1.0
   }
 }
+collection_instances {
+  id: "player"
+  collection: "/game/characters/knight/player.collection"
+  position {
+    x: 79.0
+    y: 108.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 scale_along_z: 0
+embedded_instances {
+  id: "interface"
+  data: "components {\n"
+  "  id: \"interface\"\n"
+  "  component: \"/game/gui/interface.gui\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "  property_decls {\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}

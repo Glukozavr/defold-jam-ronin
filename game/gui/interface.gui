@@ -23,9 +23,9 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 2.0
+    y: 2.0
+    z: 2.0
     w: 1.0
   }
   size {
@@ -44,7 +44,7 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "Fight!"
   font: "joystix_monospace"
-  id: "text"
+  id: "fight_text"
   xanchor: XANCHOR_LEFT
   yanchor: YANCHOR_TOP
   pivot: PIVOT_CENTER
@@ -62,7 +62,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
-  layer: ""
+  layer: "fight"
   inherit_alpha: true
   alpha: 1.0
   outline_alpha: 1.0
@@ -73,6 +73,9 @@ nodes {
   custom_type: 0
   enabled: true
   visible: true
+}
+layers {
+  name: "fight"
 }
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT
