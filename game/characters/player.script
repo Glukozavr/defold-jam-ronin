@@ -10,6 +10,10 @@ local gravity = -800
 -- take-off speed when jumping in pixel units
 local jump_takeoff_speed = 200
 
+go.property("max_health", 10)
+go.property("max_stamina", 10)
+go.property("health", 10)
+go.property("stamina", 10)
 
 -- pre-hashing ids improves performance
 local msg_contact_point_response = hash("contact_point_response")
@@ -22,14 +26,16 @@ local anim_walk = hash("run")
 local anim_idle = hash("idle")
 local anim_jump = hash("jump")
 local anim_fall = hash("fall")
+local anim_attack = hash("attack")
 local manager = hash("/managers/manager")
 local stats = "stats"
+local locked = false
 
 local e = require "game.events"
 
 function init(self)
 	-- this lets us handle input in this script
-	msg.post(manager, e.EVENTS.PLAYER_BORN)
+	msg.post(manager, e.EVENTS.PLAYER_BORN, { go_id = msg.url('.') })
 
 	-- initial player velocity
 	self.velocity = vmath.vector3(0, 0, 0)
@@ -41,11 +47,25 @@ function init(self)
 	self.anim = nil
 end
 
-local function play_animation(self, anim)
+local function unlock(self, message_id, message, sender)
+	locked = false
+end
+
+local function play_animation(self, anim, lock)
+	if locked==true then
+		return
+	end
+	if lock==true then
+		locked = true
+	end
 	-- only play animations which are not already playing
 	if self.anim ~= anim then
 		-- tell the sprite to play the animation
-		sprite.play_flipbook("#sprite", anim)
+		if lock then
+			sprite.play_flipbook("#sprite", anim, unlock)
+		else
+			sprite.play_flipbook("#sprite", anim)
+		end
 		-- remember which animation is playing
 		self.anim = anim
 	end
@@ -137,9 +157,13 @@ function on_message(self, message_id, message, sender)
 	elseif message_id==e.EVENTS.FIGHT then
 		msg.post(".", "release_input_focus")
 		print("I am so angry!")
-		msg.post(stats, e.EVENTS.RESET_STATS, { resetHealth = false, resetStamina = true })
+		msg.post(stats, e.EVENTS.UPDATE_STATS, { health = self.health, stamina = self.stamina })
 		msg.post(stats, e.EVENTS.SHOW_STATS)
 		self.velocity.x = 0;
+	elseif message_id==e.EVENTS.PERFORM then
+		if message.action=="attack" then
+			play_animation(self, anim_attack, true)
+		end
 	end
 end
 

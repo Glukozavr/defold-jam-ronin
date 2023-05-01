@@ -32,19 +32,19 @@ stamina_animations[10] = hash("stamina_100")
 
 local e = require "game.events"
 
-local function show()
+local function show(self)
 	msg.post(hp_bar, "enable")
 	msg.post(stamina_bar, "enable")
 end
 
-local function hide()
+local function hide(self)
 	msg.post(hp_bar, "disable")
 	msg.post(stamina_bar, "disable")
 end
 
-local function update_hp(value)
+local function update_hp(self, value)
 	if value > 10 then
-		value = 1
+		value = 10
 	elseif value < 0 then
 		value = 0
 	end
@@ -53,31 +53,24 @@ local function update_hp(value)
 	sprite.play_flipbook(hp_bar, anim)
 end
 
-local function update_stamina(value)
+local function update_stamina(self, value)
 	if value > 10 then
-		value = 1
+		value = 10
 	elseif value < 0 then
 		value = 0
 	end
-	
+
 	local anim = stamina_animations[value]
 	sprite.play_flipbook(stamina_bar, anim)
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == e.EVENTS.SHOW_STATS then
-		show()
+		show(self)
 	elseif message_id == e.EVENTS.HIDE_STATS then
-		hide()
-	elseif message_id == e.EVENTS.RESET_STATS then
-		if message.resetHealth then
-			update_hp(10)
-		end
-		if message.resetStamina then
-			update_stamina(10)
-		end
+		hide(self)
 	elseif message_id == e.EVENTS.UPDATE_STATS then
-		update_hp(message.health)
-		update_stamina(message.stamina)
+		update_hp(self, message.health)
+		update_stamina(self, message.stamina)
 	end
 end

@@ -8,6 +8,7 @@ M.EVENTS = {}
 M.EVENTS.DISCOVERY = hash("discovery_started")
 M.EVENTS.FIGHT = hash("fight_started")
 M.EVENTS.APPROACH = hash("approach") -- expects { position }
+M.EVENTS.PERFORM = hash("perform") -- expects { action }
 
 M.EVENTS.PLAYER_BORN = hash("player_born")
 
@@ -16,7 +17,6 @@ M.EVENTS.DETECTED = hash("player_detected") -- expects { shadow_url }
 M.EVENTS.READY = hash("enemy_ready")
 
 M.EVENTS.SHOW_STATS = hash("show_stats")
-M.EVENTS.RESET_STATS = hash("reset_stats") -- { resetHealth, resetStamina }
 M.EVENTS.HIDE_STATS = hash("hide_stats")
 M.EVENTS.UPDATE_STATS = hash("update_stats") -- { health, stamina }
 

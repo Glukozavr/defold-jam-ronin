@@ -6,6 +6,7 @@
 
 local camera = require "orthographic.camera"
 local e = require "game.events"
+local f = require "game.fight.fight_manager"
 
 local discovery_state = hash("discovery")
 local fight_state = hash("fight")
@@ -31,6 +32,28 @@ local function update_entity_state(self, entity_id)
 	end
 end
 
+local function next_fight_action(self, action)
+	local active = self.fighter
+	if action.id>0 then
+		active = self.player
+	end
+
+	msg.post(active, e.EVENTS.PERFORM, action)
+end
+
+local function start_fight(self)
+	print "Let the fight start!"
+	print "On the left corner we have a-a-a-a PLAYER!"
+	local player_health = go.get(self.player, "health")
+	print("with ", player_health, " HP!")
+	print "And on the right one is ENEMY!"
+	local enemy_health = go.get(self.fighter, "health")
+	print("with ", enemy_health, " HP!")
+	f.start(2)
+	local first_action = f.next()
+	next_fight_action(self, first_action)
+end
+
 function init(self)
 	self.enemies = {}
 	self.player = nil
@@ -41,7 +64,6 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id==e.EVENTS.PLAYER_BORN then
-		print("player_found", sender)
 		self.player = sender
 		update_entity_state(self, sender)
 	elseif message_id==e.EVENTS.ENEMY_AWAKEN then
@@ -67,6 +89,8 @@ function on_message(self, message_id, message, sender)
 			msg.post("/camera", camera.MSG_ZOOM_TO, { zoom = fight_zoom })
 			msg.post("/camera", camera.MSG_FOLLOW_OFFSET, { offset = vmath.vector3(offset, 0, 0) })
 			msg.post("/interface", e.EVENTS.FIGHT)
+
+			start_fight(self)
 		end
 	end
 end

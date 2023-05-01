@@ -7,17 +7,32 @@
 local e = require "game.events"
 local fight_distance = 30
 
+go.property("max_health", 10)
+go.property("max_stamina", 10)
+go.property("health", 10)
+go.property("stamina", 10)
+
 local anim_walk = hash("run")
 local anim_idle = hash("idle")
 local anim_jump = hash("jump")
 local anim_fall = hash("fall")
+local anim_attack = hash("attack")
 local manager = hash("/managers/manager")
+local stats = "stats"
 
-local function play_animation(self, anim)
+local function play_idle(self)
+	sprite.play_flipbook("#sprite", anim_idle)
+end
+
+local function play_animation(self, anim, lock)
 	-- only play animations which are not already playing
 	if self.anim ~= anim then
 		-- tell the sprite to play the animation
-		sprite.play_flipbook("#sprite", anim)
+		if lock then
+			sprite.play_flipbook("#sprite", anim, play_idle)
+		else
+			sprite.play_flipbook("#sprite", anim)
+		end
 		-- remember which animation is playing
 		self.anim = anim
 	end
@@ -44,21 +59,23 @@ function init(self)
 
 	-- the currently playing animation
 	self.anim = anim_idle
-end
-
-function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	msg.post(stats, e.EVENTS.HIDE_STATS)
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id==e.EVENTS.FIGHT then
 		print("BUSTED! Now I will do bad things to you!")
+		msg.post(stats, e.EVENTS.UPDATE_STATS, { health = self.health, stamina = self.stamina })
+		msg.post(stats, e.EVENTS.SHOW_STATS)
 	elseif message_id==e.EVENTS.DISCOVERY then
 		print("What a beautiful day!")
 	elseif message_id==e.EVENTS.APPROACH then
 		approach(self, message.position)
+	elseif message_id==e.EVENTS.PERFORM then
+		if message.action=="attack" then
+			print("I will destroy you, knight!")
+			play_animation(self, anim_attack, true)
+		end
 	end
 end
 
