@@ -27,6 +27,7 @@ local anim_idle = hash("idle")
 local anim_jump = hash("jump")
 local anim_fall = hash("fall")
 local anim_attack = hash("attack")
+local anim_damage = hash("damage")
 local manager = hash("/managers/manager")
 local stats = "stats"
 local locked = false
@@ -161,9 +162,14 @@ function on_message(self, message_id, message, sender)
 		msg.post(stats, e.EVENTS.SHOW_STATS)
 		self.velocity.x = 0;
 	elseif message_id==e.EVENTS.PERFORM then
-		if message.action=="attack" then
+		if message.action.anim_id=="attack" then
 			play_animation(self, anim_attack, true)
 		end
+	elseif message_id==e.EVENTS.DAMAGE_RECEIVED then
+		print("Ouch!", message.action, message.action.damage)
+		play_animation(self, anim_damage, true)
+		self.health = self.health - message.action.damage;
+		msg.post(stats, e.EVENTS.UPDATE_STATS, { health = self.health, stamina = self.stamina })
 	end
 end
 

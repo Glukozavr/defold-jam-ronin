@@ -10,6 +10,26 @@ key_trigger {
   input: KEY_SPACE
   action: "jump"
 }
+key_trigger {
+  input: KEY_Z
+  action: "attack"
+}
+key_trigger {
+  input: KEY_X
+  action: "block"
+}
+key_trigger {
+  input: KEY_C
+  action: "crouch"
+}
+key_trigger {
+  input: KEY_UP
+  action: "up"
+}
+key_trigger {
+  input: KEY_DOWN
+  action: "down"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "touch"

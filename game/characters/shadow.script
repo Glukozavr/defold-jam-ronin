@@ -5,7 +5,7 @@
 -- After that - participate in a fight
 
 local e = require "game.events"
-local fight_distance = 30
+local fight_distance = 50
 
 go.property("max_health", 10)
 go.property("max_stamina", 10)
@@ -17,6 +17,7 @@ local anim_idle = hash("idle")
 local anim_jump = hash("jump")
 local anim_fall = hash("fall")
 local anim_attack = hash("attack")
+local anim_prepare = hash("prepare")
 local manager = hash("/managers/manager")
 local stats = "stats"
 
@@ -72,10 +73,18 @@ function on_message(self, message_id, message, sender)
 	elseif message_id==e.EVENTS.APPROACH then
 		approach(self, message.position)
 	elseif message_id==e.EVENTS.PERFORM then
-		if message.action=="attack" then
+		if message.action.anim_id=="attack" then
 			print("I will destroy you, knight!")
 			play_animation(self, anim_attack, true)
 		end
+	elseif message_id==e.EVENTS.PREPARE then
+		if message.action.anim_id=="attack" then
+			print("You will never block my mighty blow!")
+			play_animation(self, anim_prepare)
+		end
+	elseif message_id==e.EVENTS.CANCEL then
+		print("Lucky!")
+		play_animation(self, anim_idle)
 	end
 end
 

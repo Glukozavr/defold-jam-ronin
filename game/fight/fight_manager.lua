@@ -7,6 +7,24 @@ local M = {}
 local next_turn = 0
 local total_fighters = 0
 
+local attack_action = { anim_id = "attack", delay = 1, damage = 1, counter_id = "block", counter_sequence = { hash("block") } }
+local forward_attack_action = { anim_id = "attack", delay = 1, damage = 2, counter_id = "back-block", counter_sequence = { hash("left"), hash("block") } }
+local down_attack_action = { anim_id = "attack", delay = 1, damage = 1, counter_id = "down-block", counter_sequence = { hash("down"), hash("block") } }
+local up_attack_action = { anim_id = "attack", delay = 1, damage = 1, counter_id = "up-block", counter_sequence = { hash("up"), hash("block") } }
+
+local function get_attack_action()
+	local random_number = math.random()
+	if random_number < 0.25 then
+		return attack_action
+	elseif random_number < 0.5 then
+		return forward_attack_action
+	elseif random_number < 0.75 then
+		return down_attack_action
+	else
+		return up_attack_action
+	end
+end
+
 M.start = function(fighters_count)
 	next_turn = 0
 	total_fighters = fighters_count 
@@ -21,7 +39,7 @@ M.next = function()
 	
 	return {
 		id = this_turn,
-		action = "attack"
+		action = get_attack_action()
 	}
 end
 

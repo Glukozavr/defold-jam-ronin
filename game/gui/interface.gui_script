@@ -1,29 +1,65 @@
 local fight_text
+local fight_action
 local fight_presentation_active = false
 local fight_presentation_duration_cape = 2
 local fight_presentation_duration = 0
 
 local e = require "game.events"
 
+local manager = "/managers/manager"
+local counter_sequence = {}
+local current = 1
+local counter = false
+
+local function show_counter(self, action)
+	gui.play_flipbook(fight_action, action.counter_id)
+	gui.set_enabled(fight_action, true)
+	counter_sequence = action.counter_sequence
+	current = 1
+	counter = true
+	msg.post(".", "acquire_input_focus")
+end
+
 function init(self)
 	fight_text = gui.get_node("fight_text")
+	fight_action = gui.get_node("fight_action")
+	gui.set_enabled(fight_text, false)
+	gui.set_enabled(fight_action, false)
+end
+
+local function hide_fight(self)
 	gui.set_enabled(fight_text, false)
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id==e.EVENTS.FIGHT then
 		gui.set_enabled(fight_text, true)
-		fight_presentation_duration = fight_presentation_duration_cape
-		fight_presentation_active = true
+		timer.delay(fight_presentation_duration_cape, false, hide_fight)
+	elseif message_id==e.EVENTS.SHOW_COUNTER then
+		show_counter(self, message.action)
 	end
 end
 
-function update(self, dt)
-	if fight_presentation_active==true then
-		fight_presentation_duration = fight_presentation_duration - dt
-		if fight_presentation_duration<0 then
-			fight_presentation_active = false
-			gui.set_enabled(fight_text, false)
+function on_input(self, action_id, action)
+	if (counter and action.pressed == true) then
+		print("Player tries to block", action_id, counter_sequence[current])
+		if action_id==counter_sequence[current] then
+			current = current + 1
+			if counter_sequence[current]==nil then
+				-- success
+				print("Player blocked!")
+				counter = false
+				msg.post(manager, e.EVENTS.COUNTER_SUCCESS)
+				gui.set_enabled(fight_action, false)
+				msg.post(".", "release_input_focus")
+			end
+		else
+			-- fail
+			print("Player can't even block properly")
+			counter = false
+			msg.post(manager, e.EVENTS.COUNTER_FAILURE)
+			gui.set_enabled(fight_action, false)
+			msg.post(".", "release_input_focus")
 		end
 	end
 end

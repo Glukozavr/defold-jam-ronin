@@ -7,6 +7,7 @@
 local camera = require "orthographic.camera"
 local e = require "game.events"
 local f = require "game.fight.fight_manager"
+local interface_url = "/interface"
 
 local discovery_state = hash("discovery")
 local fight_state = hash("fight")
@@ -32,13 +33,34 @@ local function update_entity_state(self, entity_id)
 	end
 end
 
-local function next_fight_action(self, action)
-	local active = self.fighter
-	if action.id>0 then
-		active = self.player
-	end
+local action
 
-	msg.post(active, e.EVENTS.PERFORM, action)
+local function next_fight_action(self)
+	action = f.next()
+	
+	local active
+	--if action.id==0 then
+		active = self.fighter
+		msg.post(active, e.EVENTS.PREPARE, action)
+		msg.post(interface_url, e.EVENTS.SHOW_COUNTER, action)
+	--else
+	--	active = self.player
+	--	msg.post(active, e.EVENTS.PREPARE)
+	--end
+
+end
+
+local function countered(self)
+	msg.post(self.fighter, e.EVENTS.CANCEL)
+
+	timer.delay(1, false, next_fight_action)
+end
+
+local function damaged(self) 
+	msg.post(self.fighter, e.EVENTS.PERFORM, action)
+	msg.post(self.player, e.EVENTS.DAMAGE_RECEIVED, action)
+
+	timer.delay(1, false, next_fight_action)
 end
 
 local function start_fight(self)
@@ -50,8 +72,8 @@ local function start_fight(self)
 	local enemy_health = go.get(self.fighter, "health")
 	print("with ", enemy_health, " HP!")
 	f.start(2)
-	local first_action = f.next()
-	next_fight_action(self, first_action)
+
+	timer.delay(3, false, next_fight_action)
 end
 
 function init(self)
@@ -92,5 +114,9 @@ function on_message(self, message_id, message, sender)
 
 			start_fight(self)
 		end
+	elseif message_id==e.EVENTS.COUNTER_SUCCESS then
+		countered(self)
+	elseif message_id==e.EVENTS.COUNTER_FAILURE then
+		damaged(self)
 	end
 end
