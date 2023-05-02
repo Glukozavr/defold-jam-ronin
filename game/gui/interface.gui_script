@@ -10,6 +10,7 @@ local manager = "/managers/manager"
 local counter_sequence = {}
 local current = 1
 local counter = false
+local timeleft = 0;
 
 local function show_counter(self, action)
 	gui.play_flipbook(fight_action, action.counter_id)
@@ -18,6 +19,7 @@ local function show_counter(self, action)
 	current = 1
 	counter = true
 	msg.post(".", "acquire_input_focus")
+	timeleft = action.delay
 end
 
 function init(self)
@@ -29,6 +31,10 @@ end
 
 local function hide_fight(self)
 	gui.set_enabled(fight_text, false)
+end
+
+local function counter_result(self, action, result)
+	
 end
 
 function on_message(self, message_id, message, sender)
@@ -62,4 +68,8 @@ function on_input(self, action_id, action)
 			msg.post(".", "release_input_focus")
 		end
 	end
+end
+
+function update(self, dt)
+	
 end
