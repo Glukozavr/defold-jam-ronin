@@ -7,10 +7,16 @@ local M = {}
 local next_turn = 0
 local total_fighters = 0
 
-local attack_action = { anim_id = "attack", delay = 1, damage = 1, counter_id = "block", counter_sequence = { hash("block") } }
-local forward_attack_action = { anim_id = "attack", delay = 1, damage = 2, counter_id = "back-block", counter_sequence = { hash("left"), hash("block") } }
-local down_attack_action = { anim_id = "attack", delay = 1, damage = 1, counter_id = "down-block", counter_sequence = { hash("down"), hash("block") } }
-local up_attack_action = { anim_id = "attack", delay = 1, damage = 1, counter_id = "up-block", counter_sequence = { hash("up"), hash("block") } }
+local attack_action = { 
+	cost = 1,
+	anim_id = "attack", 
+	delay = 1, damage = 1, 
+	counter_id = "block", 
+	counter_sequence = { hash("block") }
+}
+local forward_attack_action = { cost = 2, anim_id = "attack", delay = 1, damage = 2, counter_id = "back-block", counter_sequence = { hash("left"), hash("block") } }
+local down_attack_action = { cost = 2, anim_id = "attack", delay = 1, damage = 1, counter_id = "down-block", counter_sequence = { hash("down"), hash("block") } }
+local up_attack_action = { cost = 2, anim_id = "attack", delay = 1, damage = 1, counter_id = "up-block", counter_sequence = { hash("up"), hash("block") } }
 
 local function get_attack_action()
 	local random_number = math.random()

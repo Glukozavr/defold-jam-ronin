@@ -85,6 +85,10 @@ function on_message(self, message_id, message, sender)
 	elseif message_id==e.EVENTS.CANCEL then
 		print("Lucky!")
 		play_animation(self, anim_idle)
+	elseif message_id==e.EVENTS.USE_STAMINA then
+		print("COSTS! U was charged", message, message.amount)
+		self.stamina = self.stamina - message.amount;
+		msg.post(stats, e.EVENTS.UPDATE_STATS, { health = self.health, stamina = self.stamina })
 	end
 end
 

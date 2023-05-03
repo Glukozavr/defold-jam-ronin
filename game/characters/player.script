@@ -170,6 +170,9 @@ function on_message(self, message_id, message, sender)
 		play_animation(self, anim_damage, true)
 		self.health = self.health - message.action.damage;
 		msg.post(stats, e.EVENTS.UPDATE_STATS, { health = self.health, stamina = self.stamina })
+	elseif message_id==e.EVENTS.USE_STAMINA then
+		self.stamina = self.stamina - message.amount;
+		msg.post(stats, e.EVENTS.UPDATE_STATS, { health = self.health, stamina = self.stamina })
 	end
 end
 

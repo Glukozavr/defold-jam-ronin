@@ -33,8 +33,18 @@ local function hide_fight(self)
 	gui.set_enabled(fight_text, false)
 end
 
-local function counter_result(self, action, result)
-	
+local function counter_result(self, result, tried)
+	-- success
+	if result==true then
+		print("Player blocked!")
+		msg.post(manager, e.EVENTS.COUNTER_SUCCESS)
+	else
+		print("Player can't even block properly")
+		msg.post(manager, e.EVENTS.COUNTER_FAILURE, { tried = tried })
+	end
+	counter = false
+	gui.set_enabled(fight_action, false)
+	msg.post(".", "release_input_focus")
 end
 
 function on_message(self, message_id, message, sender)
@@ -52,24 +62,19 @@ function on_input(self, action_id, action)
 		if action_id==counter_sequence[current] then
 			current = current + 1
 			if counter_sequence[current]==nil then
-				-- success
-				print("Player blocked!")
-				counter = false
-				msg.post(manager, e.EVENTS.COUNTER_SUCCESS)
-				gui.set_enabled(fight_action, false)
-				msg.post(".", "release_input_focus")
+				counter_result(self, true)
 			end
 		else
-			-- fail
-			print("Player can't even block properly")
-			counter = false
-			msg.post(manager, e.EVENTS.COUNTER_FAILURE)
-			gui.set_enabled(fight_action, false)
-			msg.post(".", "release_input_focus")
+			counter_result(self, false, true)
 		end
 	end
 end
 
 function update(self, dt)
-	
+	if counter then
+		timeleft = timeleft - dt
+		if timeleft < 0 then
+			counter_result(self, false, false)
+		end
+	end
 end

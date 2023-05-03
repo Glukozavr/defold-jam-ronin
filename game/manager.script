@@ -40,7 +40,9 @@ local function next_fight_action(self)
 	
 	local active
 	--if action.id==0 then
-		active = self.fighter
+	active = self.fighter
+	print("COSTS! To attack it will be", action.action.cost)
+	msg.post(active, e.EVENTS.USE_STAMINA, { amount = action.action.cost })
 		msg.post(active, e.EVENTS.PREPARE, action)
 		msg.post(interface_url, e.EVENTS.SHOW_COUNTER, action)
 	--else
@@ -51,12 +53,14 @@ local function next_fight_action(self)
 end
 
 local function countered(self)
+	msg.post(self.player, e.EVENTS.USE_STAMINA, { amount = 1 })
 	msg.post(self.fighter, e.EVENTS.CANCEL)
 
 	timer.delay(1, false, next_fight_action)
 end
 
 local function damaged(self) 
+	msg.post(self.player, e.EVENTS.USE_STAMINA, { amount = 1 })
 	msg.post(self.fighter, e.EVENTS.PERFORM, action)
 	msg.post(self.player, e.EVENTS.DAMAGE_RECEIVED, action)
 

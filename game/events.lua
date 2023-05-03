@@ -13,6 +13,7 @@ M.EVENTS.PERFORM = hash("perform") -- expects { action }
 M.EVENTS.SHOW_COUNTER = hash("show_counter") -- expects { action }
 M.EVENTS.DAMAGE_RECEIVED = hash("damage_received") -- expects { action }
 M.EVENTS.CANCEL = hash("cancel")
+M.EVENTS.USE_STAMINA = hash("use_stamina") -- { amount }
 
 M.EVENTS.PLAYER_BORN = hash("player_born")
 
