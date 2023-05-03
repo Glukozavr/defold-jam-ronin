@@ -16,7 +16,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "hp_10"
+  id: "hp_1"
   start_tile: 10
   end_tile: 10
   playback: PLAYBACK_ONCE_FORWARD
@@ -25,7 +25,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "hp_100"
+  id: "hp_10"
   start_tile: 1
   end_tile: 1
   playback: PLAYBACK_ONCE_FORWARD
@@ -34,7 +34,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "hp_20"
+  id: "hp_2"
   start_tile: 9
   end_tile: 9
   playback: PLAYBACK_ONCE_FORWARD
@@ -43,7 +43,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "hp_30"
+  id: "hp_3"
   start_tile: 8
   end_tile: 8
   playback: PLAYBACK_ONCE_FORWARD
@@ -52,7 +52,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "hp_40"
+  id: "hp_4"
   start_tile: 7
   end_tile: 7
   playback: PLAYBACK_ONCE_FORWARD
@@ -61,7 +61,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "hp_50"
+  id: "hp_5"
   start_tile: 6
   end_tile: 6
   playback: PLAYBACK_ONCE_FORWARD
@@ -70,7 +70,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "hp_60"
+  id: "hp_6"
   start_tile: 5
   end_tile: 5
   playback: PLAYBACK_ONCE_FORWARD
@@ -79,7 +79,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "hp_70"
+  id: "hp_7"
   start_tile: 4
   end_tile: 4
   playback: PLAYBACK_ONCE_FORWARD
@@ -88,7 +88,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "hp_80"
+  id: "hp_8"
   start_tile: 3
   end_tile: 3
   playback: PLAYBACK_ONCE_FORWARD
@@ -97,7 +97,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "hp_90"
+  id: "hp_9"
   start_tile: 2
   end_tile: 2
   playback: PLAYBACK_ONCE_FORWARD
@@ -115,7 +115,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "stamina_10"
+  id: "stamina_1"
   start_tile: 21
   end_tile: 21
   playback: PLAYBACK_ONCE_FORWARD
@@ -124,7 +124,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "stamina_100"
+  id: "stamina_10"
   start_tile: 12
   end_tile: 12
   playback: PLAYBACK_ONCE_FORWARD
@@ -133,7 +133,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "stamina_20"
+  id: "stamina_2"
   start_tile: 20
   end_tile: 20
   playback: PLAYBACK_ONCE_FORWARD
@@ -142,7 +142,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "stamina_30"
+  id: "stamina_3"
   start_tile: 19
   end_tile: 19
   playback: PLAYBACK_ONCE_FORWARD
@@ -151,7 +151,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "stamina_40"
+  id: "stamina_4"
   start_tile: 18
   end_tile: 18
   playback: PLAYBACK_ONCE_FORWARD
@@ -160,7 +160,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "stamina_50"
+  id: "stamina_5"
   start_tile: 17
   end_tile: 17
   playback: PLAYBACK_ONCE_FORWARD
@@ -169,7 +169,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "stamina_60"
+  id: "stamina_6"
   start_tile: 16
   end_tile: 16
   playback: PLAYBACK_ONCE_FORWARD
@@ -178,7 +178,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "stamina_70"
+  id: "stamina_7"
   start_tile: 15
   end_tile: 15
   playback: PLAYBACK_ONCE_FORWARD
@@ -187,7 +187,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "stamina_80"
+  id: "stamina_8"
   start_tile: 14
   end_tile: 14
   playback: PLAYBACK_ONCE_FORWARD
@@ -196,7 +196,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "stamina_90"
+  id: "stamina_9"
   start_tile: 13
   end_tile: 13
   playback: PLAYBACK_ONCE_FORWARD

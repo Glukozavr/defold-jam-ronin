@@ -1,0 +1,36 @@
+-- ! Simple marker sript to identify as player
+
+-- ! GO state prperties
+go.property("is_in_fight", false)
+
+-- ! Local variables
+local manager = hash("/managers/manager")
+
+-- ! Load require components
+local events = require "game.characters.char_events"
+local e = require "game.events"
+
+function init(self)
+	print("A might player is born, glory to him", msg.url('.'))
+	msg.post(manager, e.EVENTS.PLAYER_BORN, { go_id = msg.url('.') })
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id==e.EVENTS.DISCOVERY then
+		self.is_in_fight = false
+		print "Player: I am up for an adventure"
+		msg.post(".", events.msg_command_input_unlock)
+	elseif message_id==e.EVENTS.FIGHT then
+		self.is_in_fight = true
+		print "Player: You choose violence?"
+		msg.post(".", events.msg_command_input_lock)
+	elseif message_id==e.EVENTS.DAMAGE_RECEIVED then
+		print("Player: Ouch!", message.action, message.action.damage)
+	elseif message_id == events.msg_command_action then
+		msg.post(".", events.msg_command_input_lock)
+	elseif message_id == events.msg_command_action_completed then
+		if not self.is_in_fight then
+			msg.post(".", events.msg_command_input_unlock)
+		end
+	end
+end

@@ -16,6 +16,15 @@ animations {
   flip_vertical: 0
 }
 animations {
+  id: "block"
+  start_tile: 11
+  end_tile: 14
+  playback: PLAYBACK_ONCE_BACKWARD
+  fps: 10
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
   id: "damage"
   start_tile: 41
   end_tile: 43

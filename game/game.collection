@@ -37,7 +37,7 @@ instances {
     }
     properties {
       id: "follow_target"
-      value: "/player/knight"
+      value: "/adventurer"
       type: PROPERTY_TYPE_HASH
     }
     properties {
@@ -67,6 +67,46 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "adventurer"
+  prototype: "/game/characters/knight/adventurer.go"
+  position {
+    x: 81.0
+    y: 108.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "shadow"
+  prototype: "/game/characters/shadow/shadow.go"
+  position {
+    x: 759.0
+    y: 108.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 collection_instances {
   id: "village"
   collection: "/game/levels/village.collection"
@@ -88,51 +128,11 @@ collection_instances {
   }
 }
 collection_instances {
-  id: "enemy"
-  collection: "/game/characters/shadow/enemy.collection"
-  position {
-    x: 759.0
-    y: 107.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 1.0
-    z: 0.0
-    w: 6.123234E-17
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-collection_instances {
   id: "managers"
   collection: "/game/managers.collection"
   position {
     x: 0.0
     y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-collection_instances {
-  id: "player"
-  collection: "/game/characters/knight/player.collection"
-  position {
-    x: 79.0
-    y: 108.0
     z: 0.0
   }
   rotation {

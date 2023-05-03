@@ -1,0 +1,142 @@
+-- ! Character basic physics as kinetic entity
+
+-- ! Configuration parameters
+-- these are the tweaks for the mechanics, feel free to change them for a different feeling
+-- acceleration factor to use when air-borne
+go.property("air_acceleration_factor", 0.8)
+-- max speed right/left
+go.property("max_speed", 100)
+-- gravity pulling the player down in pixel units
+go.property("gravity", -800)
+-- take-off speed when jumping in pixel units
+go.property("jump_takeoff_speed", 200)
+
+-- ! Physics state properties
+-- velocity to define movement
+go.property("velocity", vmath.vector3(0, 0, 0))
+-- flag to mark ground contact
+go.property("ground_contact", false)
+-- flag to mark wall contact
+go.property("wall_contact", false)
+
+-- ! Load require components
+local events = require "game.characters.char_events"
+
+-- ! Pre-hashing ids improves performance
+local group_obstacle = hash("ground")
+local msg_contact_point_response = hash("contact_point_response")
+
+function init(self)
+	-- initial player velocity
+	self.velocity = vmath.vector3(0, 0, 0)
+	-- support variable to keep track of collisions and separation
+	self.correction = vmath.vector3()
+	-- if the player stands on ground or not
+	self.ground_contact = false
+end
+
+function update(self, dt)
+	-- apply gravity
+	self.velocity.y = self.velocity.y + self.gravity * dt
+
+	-- move player
+	local pos = go.get_position()
+	pos = pos + self.velocity * dt
+	go.set_position(pos)
+
+	msg.post(".", events.msg_command_update_animation, { 
+		velocity = self.velocity,
+		ground_contact = self.ground_contact,
+		wall_contact = self.wall_contact,
+	})
+
+	-- reset volatile state
+	self.correction = vmath.vector3()
+	self.ground_contact = false
+	self.wall_contact = false
+end
+
+-- https://defold.com/manuals/physics/#resolving-kinematic-collisions
+local function handle_obstacle_contact(self, normal, distance)
+	if distance > 0 then
+		-- First, project the accumulated correction onto
+		-- the penetration vector
+		local proj = vmath.project(self.correction, normal * distance)
+		if proj < 1 then
+			-- Only care for projections that does not overshoot.
+			local comp = (distance - distance * proj) * normal
+			-- Apply compensation
+			go.set_position(go.get_position() + comp)
+			-- Accumulate correction done
+			self.correction = self.correction + comp
+		end
+	end
+
+	-- collided with a wall
+	-- stop horizontal movement
+	if math.abs(normal.x) > 0.7 then
+		self.wall_contact = true
+		self.velocity.x = 0
+	end
+	-- collided with the ground
+	-- stop vertical movement
+	if normal.y > 0.7 then
+		self.ground_contact = true
+		self.velocity.y = 0
+	end
+	-- collided with the ceiling
+	-- stop vertical movement
+	if normal.y < -0.7 then
+		self.velocity.y = 0
+	end
+end
+
+local function jump(self)
+	-- only allow jump from ground
+	-- (extend this with a counter to do things like double-jumps)
+	if self.ground_contact then
+		-- set take-off speed
+		self.velocity.y = self.jump_takeoff_speed
+		self.ground_contact = false
+	end
+end
+
+local function abort_jump(self)
+	-- cut the jump short if we are still going up
+	if self.velocity.y > 0 then
+		-- scale down the upwards speed
+		self.velocity.y = self.velocity.y * 0.5
+	end
+end
+
+local function walk(self, direction)
+	if self.ground_contact then
+		self.velocity.x = self.max_speed * direction
+	else
+		-- move slower in the air
+		self.velocity.x = self.max_speed * self.air_acceleration_factor * direction
+	end
+end
+
+local function reset(self)
+	walk(self, 0)
+	abort_jump(self)
+end
+
+function on_message(self, message_id, message, sender)
+	-- check if we received a contact point message
+	if message_id == msg_contact_point_response then
+		-- check that the object is something we consider an obstacle
+		if message.group == group_obstacle then
+			handle_obstacle_contact(self, message.normal, message.distance)
+		end
+	elseif message_id == events.msg_command_walk then
+		walk(self, message.value)
+	elseif message_id == events.msg_command_jump then
+		jump(self)
+	elseif message_id == events.msg_command_abort_jump then
+		abort_jump(self)
+	elseif message_id == events.msg_abort then
+		reset(self)
+	end
+end

@@ -21,10 +21,6 @@ M.EVENTS.ENEMY_AWAKEN = hash("enemy_awaken")
 M.EVENTS.DETECTED = hash("player_detected") -- expects { shadow_url }
 M.EVENTS.READY = hash("enemy_ready")
 
-M.EVENTS.SHOW_STATS = hash("show_stats")
-M.EVENTS.HIDE_STATS = hash("hide_stats")
-M.EVENTS.UPDATE_STATS = hash("update_stats") -- { health, stamina }
-
 M.EVENTS.COUNTER_SUCCESS = hash("conter_success")
 M.EVENTS.COUNTER_FAILURE = hash("counter_failure")
 

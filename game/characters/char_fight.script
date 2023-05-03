@@ -1,0 +1,56 @@
+-- ! Character fight controller
+
+-- ! Configuration parameters
+go.property("max_health", 10)
+go.property("max_stamina", 5)
+go.property("health", 10)
+go.property("stamina", 5)
+
+-- ! Character fight state properties
+go.property("in_fight", false)
+
+-- ! Pre-hashing ids improves performance
+local manager = hash("/managers/manager")
+
+-- ! Load require components
+local events = require "game.characters.char_events"
+local e = require "game.events"
+
+local function normalize(value, max_value)
+	return math.floor((value / max_value) * 10)
+end
+
+local function update_stats(self) 
+	msg.post(".", events.msg_command_update_stats, {
+		health = normalize(self.health, self.max_health),
+		stamina = normalize(self.stamina, self.max_stamina)
+	})
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id==e.EVENTS.DISCOVERY then
+		self.in_fight = false
+		msg.post(".", events.msg_command_hide_stats)
+	elseif message_id==e.EVENTS.FIGHT then
+		self.in_fight = true
+		update_stats(self)
+		msg.post(".", events.msg_command_show_stats)
+	elseif message_id==e.EVENTS.PERFORM then
+		print("Got a request", message, message.type)
+		msg.post(".", events.msg_command_action, message)
+	elseif message_id==e.EVENTS.PREPARE then
+		if message.action.anim_id=="attack" then
+			msg.post(".", events.msg_command_action, { type = "prepare" })
+		end
+	elseif message_id==e.EVENTS.CANCEL then
+		print("Lucky!")
+		msg.post(".", events.msg_command_action_completed)
+	elseif message_id==e.EVENTS.DAMAGE_RECEIVED then
+		self.health = self.health - message.action.damage;
+		update_stats(self)
+		msg.post(".", events.msg_command_action, { type = "damage" })
+	elseif message_id==e.EVENTS.USE_STAMINA then
+		self.stamina = self.stamina - message.amount;
+		update_stats(self)
+	end
+end

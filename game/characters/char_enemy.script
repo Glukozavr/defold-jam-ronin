@@ -1,0 +1,74 @@
+-- ! Simple marker sript to identify as player
+
+-- ! Configuration parameters
+go.property("fight_distance", 50)
+
+-- ! GO State properties
+go.property("dest_position_x", nil)
+go.property("is_approaching", false)
+
+
+-- ! Local variables
+local manager = hash("/managers/manager")
+local msg_colision_response = hash("collision_response")
+local player_group = hash("player")
+local go_id
+
+-- ! Load require components
+local events = require "game.characters.char_events"
+local e = require "game.events"
+
+local function approach(self, position)
+	local local_pos = go.get_position(".")
+	local dir = 1
+	if local_pos.x < position.x then
+		dir = -1
+	end
+	self.dest_position_x = position.x + dir * self.fight_distance
+	self.is_approaching = true
+end
+
+function init(self)
+	self.detected = false
+	go_id = msg.url('.')
+	print("Enemy: I am just a background for your story, eh?", go_id)
+	msg.post(manager, e.EVENTS.ENEMY_AWAKEN, { go_id = go_id })
+end
+
+function update(self, dt)
+	if self.is_approaching then
+		local local_pos = go.get_position(".")
+		local dist = math.abs(local_pos.x - self.dest_position_x)
+		if dist > 1 then
+			-- continue approaching
+			local dir = 1
+			if local_pos.x > self.dest_position_x then
+				dir = -1
+			end
+			msg.post(".", events.msg_command_walk, { value = dir })
+		else
+			-- stop
+			self.is_approaching = false
+			msg.post(".", events.msg_command_walk, { value = 0 })
+			msg.post(manager, e.EVENTS.READY, { go_id = go_id })
+		end
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id==e.EVENTS.DISCOVERY then
+		print "Enemy: Some me time!"
+	elseif message_id==e.EVENTS.FIGHT then
+		print "Enemy: You are not welcome here!"
+	elseif message_id==e.EVENTS.DAMAGE_RECEIVED then
+		print("Enemy: Damn it!", message.action, message.action.damage)
+	elseif message_id==e.EVENTS.APPROACH then
+		approach(self, message.position)
+	elseif message_id == msg_colision_response then
+		if (not self.detected and message.other_group == player_group) then
+			self.detected = true
+			print("Enemy: I will get you!")
+			msg.post(manager, e.EVENTS.DETECTED, { go_id = go_id })
+		end
+	end
+end

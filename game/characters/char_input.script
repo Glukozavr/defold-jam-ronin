@@ -1,0 +1,41 @@
+-- ! Character basic input based controller
+
+-- ! Load require components
+local events = require "game.characters.char_events"
+
+-- ! Pre-hashing ids improves performance
+local input_left = hash("left")
+local input_right = hash("right")
+local input_jump = hash("jump")
+local input_attack = hash("attack")
+local input_block = hash("block")
+local input_crouch = hash("crouch")
+
+function on_message(self, message_id, message, sender)
+	if message_id == events.msg_command_input_lock then
+		msg.post(".", "command_abort")
+		msg.post(".", "release_input_focus")
+	elseif message_id == events.msg_command_input_unlock then
+		msg.post(".", "acquire_input_focus")
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id == input_left then
+		msg.post(".", events.msg_command_walk, { value = -action.value })
+	elseif action_id == input_right then
+		msg.post(".", events.msg_command_walk, { value = action.value })
+	elseif action_id == input_jump then
+		if action.pressed then
+			msg.post(".", events.msg_command_jump)
+		elseif action.released then
+			msg.post(".", events.msg_command_abort_jump)
+		end
+	elseif action_id == input_attack then
+		msg.post(".", events.msg_command_action, { type = "attack" })
+	elseif action_id == input_block then
+		msg.post(".", events.msg_command_action, { type = "block" })
+	elseif action_id == input_crouch then
+		msg.post(".", events.msg_command_crouch)
+	end
+end

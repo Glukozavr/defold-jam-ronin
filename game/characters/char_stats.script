@@ -1,0 +1,47 @@
+-- ! Stats Logic
+
+-- ! Load require components
+local events = require "game.characters.char_events"
+
+-- ! Pre-hashing ids improves performance
+local sprite_health = "#sprite_health"
+local sprite_stamina = "#sprite_stamina"
+local health_animations_prefix = "hp_"
+local stamina_animations_prefix = "stamina_"
+
+local function show(self)
+	msg.post(sprite_health, "enable")
+	msg.post(sprite_stamina, "enable")
+end
+
+local function hide(self)
+	msg.post(sprite_health, "disable")
+	msg.post(sprite_stamina, "disable")
+end
+
+local function update_sprite(self, value, sprite_id)
+	if value > 10 then
+		value = 10
+	elseif value < 0 then
+		value = 0
+	end
+
+	local prefix
+	if sprite_id == sprite_health then
+		prefix = health_animations_prefix
+	elseif sprite_id == sprite_stamina then
+		prefix = stamina_animations_prefix
+	end
+	sprite.play_flipbook(sprite_id, prefix  .. value)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == events.msg_command_show_stats then
+		show(self)
+	elseif message_id == events.msg_command_hide_stats then
+		hide(self)
+	elseif message_id == events.msg_command_update_stats then
+		update_sprite(self, message.health, sprite_health)
+		update_sprite(self, message.stamina, sprite_stamina)
+	end
+end

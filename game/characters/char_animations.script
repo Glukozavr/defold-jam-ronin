@@ -1,0 +1,100 @@
+-- ! Character basic animation controller
+
+-- ! Load require components
+local events = require "game.characters.char_events"
+
+-- ! Pre-hashing ids improves performance
+local anim_walk = hash("run")
+local anim_idle = hash("idle")
+local anim_jump = hash("jump")
+local anim_fall = hash("fall")
+local anim_attack = hash("attack")
+local anim_damage = hash("damage")
+local anim_block = hash("block")
+local anim_prepare = hash("prepare")
+
+local sprite_body = "#sprite_body"
+
+-- ! GO state properties
+go.property("update_active", true)
+
+function init(self)
+	-- the currently playing animation
+	self.anim = nil
+	-- the current direction of animation
+	self.dir = nil
+end
+
+local function play_animation(self, anim, callback)
+	-- only play animations which are not already playing
+	if self.anim ~= anim then
+		print ("Let's do it", anim)
+		if anim == anim_block then
+			print "BLOCKING"
+		end
+		-- tell the sprite to play the animation
+		sprite.play_flipbook(sprite_body, anim, callback)
+		-- remember which animation is playing
+		self.anim = anim
+	end
+end
+
+local function update_animations(self, params)
+	-- make sure the player character faces the right way
+	local velocity = params.velocity
+	local dir = velocity.x < 0
+	if (not (velocity.x == 0) and not (dir == self.dir)) then
+		self.dir = dir
+		sprite.set_hflip(sprite_body, self.dir)
+	end
+	-- make sure the right animation is playing
+	local ground_contact = params.ground_contact
+	if ground_contact then
+		if velocity.x == 0 then
+			play_animation(self, anim_idle)
+		else
+			play_animation(self, anim_walk)
+		end
+	else
+		if velocity.y > 0 then
+			play_animation(self, anim_jump)
+		else
+			play_animation(self, anim_fall)
+		end
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == events.msg_command_update_animation then
+		if self.update_active then
+			update_animations(self, message)
+		end
+	elseif message_id == events.msg_command_action then
+		if message.type == "attack" then
+			self.update_active = false
+			play_animation(self, anim_attack, function()
+				self.update_active = true
+				msg.post(".", events.msg_command_action_completed)
+			end)
+		elseif message.type == "damage" then
+			self.update_active = false
+			play_animation(self, anim_damage, function()
+				self.update_active = true
+				msg.post(".", events.msg_command_action_completed)
+			end)
+		elseif message.type == "block" then
+			print("wanna block?", message, message.type)
+			self.update_active = false
+			play_animation(self, anim_block, function()
+				self.update_active = true
+				msg.post(".", events.msg_command_action_completed)
+			end)
+		elseif message.type == "prepare" then
+			self.update_active = false
+			play_animation(self, anim_prepare)
+		end
+	elseif message_id == events.msg_command_action_completed then
+		self.update_active = true
+		play_animation(self, anim_idle)
+	end
+end
