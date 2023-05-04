@@ -60,8 +60,6 @@ function on_message(self, message_id, message, sender)
 		print "Enemy: Some me time!"
 	elseif message_id==e.EVENTS.FIGHT then
 		print "Enemy: You are not welcome here!"
-	elseif message_id==e.EVENTS.DAMAGE_RECEIVED then
-		print("Enemy: Damn it!", message.action, message.action.damage)
 	elseif message_id==e.EVENTS.APPROACH then
 		approach(self, message.position)
 	elseif message_id == msg_colision_response then

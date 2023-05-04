@@ -12,6 +12,7 @@ local anim_attack = hash("attack")
 local anim_damage = hash("damage")
 local anim_block = hash("block")
 local anim_prepare = hash("prepare")
+local anim_die = hash("die")
 
 local sprite_body = "#sprite_body"
 
@@ -23,15 +24,14 @@ function init(self)
 	self.anim = nil
 	-- the current direction of animation
 	self.dir = nil
+	-- the current direction of animation
+	self.dead = false
 end
 
 local function play_animation(self, anim, callback)
 	-- only play animations which are not already playing
 	if self.anim ~= anim then
-		print ("Let's do it", anim)
-		if anim == anim_block then
-			print "BLOCKING"
-		end
+		print("ANIMATE: ", self, anim)
 		-- tell the sprite to play the animation
 		sprite.play_flipbook(sprite_body, anim, callback)
 		-- remember which animation is playing
@@ -65,33 +65,40 @@ local function update_animations(self, params)
 end
 
 function on_message(self, message_id, message, sender)
+	if self.dead then
+		return
+	end
 	if message_id == events.msg_command_update_animation then
 		if self.update_active then
 			update_animations(self, message)
 		end
 	elseif message_id == events.msg_command_action then
-		if message.type == "attack" then
+		print("Getting command", message.id, self)
+		if message.id == "attack" then
 			self.update_active = false
 			play_animation(self, anim_attack, function()
 				self.update_active = true
 				msg.post(".", events.msg_command_action_completed)
 			end)
-		elseif message.type == "damage" then
+		elseif message.id == "damage" then
 			self.update_active = false
 			play_animation(self, anim_damage, function()
 				self.update_active = true
 				msg.post(".", events.msg_command_action_completed)
 			end)
-		elseif message.type == "block" then
-			print("wanna block?", message, message.type)
+		elseif message.id == "block" then
 			self.update_active = false
 			play_animation(self, anim_block, function()
 				self.update_active = true
 				msg.post(".", events.msg_command_action_completed)
 			end)
-		elseif message.type == "prepare" then
+		elseif message.id == "prepare" then
 			self.update_active = false
 			play_animation(self, anim_prepare)
+		elseif message.id == "die" then
+			self.update_active = false
+			self.dead = true
+			play_animation(self, anim_die)
 		end
 	elseif message_id == events.msg_command_action_completed then
 		self.update_active = true

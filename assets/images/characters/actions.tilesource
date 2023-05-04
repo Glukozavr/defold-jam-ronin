@@ -1,6 +1,6 @@
 image: "/assets/images/characters/action-sheet.png"
-tile_width: 24
-tile_height: 24
+tile_width: 10
+tile_height: 10
 tile_margin: 0
 tile_spacing: 0
 collision: ""
@@ -16,43 +16,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "back-block"
-  start_tile: 6
-  end_tile: 6
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
   id: "block"
-  start_tile: 5
-  end_tile: 5
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
-  id: "down-attack"
-  start_tile: 3
-  end_tile: 3
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
-  id: "down-block"
-  start_tile: 1
-  end_tile: 7
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
-  id: "forward-attack"
   start_tile: 2
   end_tile: 2
   playback: PLAYBACK_ONCE_FORWARD
@@ -61,7 +25,25 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "up-attack"
+  id: "down"
+  start_tile: 5
+  end_tile: 5
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 30
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "left"
+  start_tile: 6
+  end_tile: 6
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 30
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "right"
   start_tile: 4
   end_tile: 4
   playback: PLAYBACK_ONCE_FORWARD
@@ -70,9 +52,9 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "up-block"
-  start_tile: 8
-  end_tile: 8
+  id: "up"
+  start_tile: 3
+  end_tile: 3
   playback: PLAYBACK_ONCE_FORWARD
   fps: 30
   flip_horizontal: 0

@@ -3,7 +3,7 @@ local M = {}
 -- A call to update animation based on physics variables
 M.msg_command_update_animation = hash("command_update_animations") -- { velocity, ground_contact, wall_contact }
 -- A call to perfrom an action
-M.msg_command_action = hash("command_action") -- { type }, where type is a string name
+M.msg_command_action = hash("command_action") -- { id }, where id is a string name
 -- A call to notify an action is completed
 M.msg_command_action_completed = hash("command_action_completed")
 M.msg_command_input_lock = hash("command_input_lock")

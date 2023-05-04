@@ -4,16 +4,21 @@
 -- For example, turn on discovery mode on start and battle mode on detection
 -- and back to discovery if battle is won, or end the game is failed
 
+-- ! Load require components
 local camera = require "orthographic.camera"
 local e = require "game.events"
-local f = require "game.fight.fight_manager"
-local interface_url = "/interface"
+local f = require "game.fight.fight_machine"
 
+-- ! Local variables
+local interface_url = "/interface"
 local discovery_state = hash("discovery")
 local fight_state = hash("fight")
 local state = discovery_state
-local discovery_zoom = 3
-local fight_zoom = 3.5
+local next_action_event = hash("next_fight_action")
+
+go.property("discovery_zoom", 3)
+go.property("fight_zoom", 3.5)
+go.property("fight_delay", 3)
 
 local function is_enemy_legit(self, enemies, enemy_url)
 	local is_legit = false
@@ -33,52 +38,87 @@ local function update_entity_state(self, entity_id)
 	end
 end
 
-local action
+local function process_action(self, action)
+	local char = self.fighter
+	if action.is_player then
+		char = self.player
+	end
+
+	print("FIGHT: ", action.id, char)
+	if action.id == f.actions.tire_id then
+		msg.post(char, e.EVENTS.USE_STAMINA, { amount = action.value })
+	elseif action.id == f.actions.damage_id then
+		msg.post(char, e.EVENTS.DAMAGE_RECEIVED, { amount = action.value })
+	elseif action.id == f.actions.reset_stamina_id then
+		msg.post(char, e.EVENTS.RESET_STAMINA)
+	elseif action.id == f.actions.fail_id then
+		msg.post(char, e.EVENTS.CANCEL)
+	elseif action.id == f.actions.attack_id then
+		msg.post(char, e.EVENTS.PERFORM, { id = "attack" })
+	elseif action.id == f.actions.prepare_id then
+		msg.post(char, e.EVENTS.PREPARE)
+	elseif action.id == f.actions.counter_id then
+		msg.post(char, e.EVENTS.PERFORM, { id = "block" })
+	elseif action.id == f.actions.die_id then
+		msg.post(char, e.EVENTS.DIE)
+	elseif action.id == f.actions.input_attack_id then
+		msg.post(interface_url, e.EVENTS.SHOW_ATTACK, { stamina = action.value, delay = 1 })
+	elseif action.id == f.actions.input_counter_id then
+		msg.post(interface_url, e.EVENTS.SHOW_COUNTER, { action = action.sequence, delay = 1 })
+	elseif action.id == f.actions.finish_id then
+		state = discovery_state
+		update_entity_state(self, self.player)
+		update_entity_state(self, self.fighter)
+		self.fighter = nil
+		msg.post("/camera", camera.MSG_ZOOM_TO, { zoom = self.discovery_zoom })
+		msg.post("/camera", camera.MSG_FOLLOW_OFFSET, { offset = vmath.vector3(0, 0, 0) })
+		msg.post("/interface", e.EVENTS.DISCOVERY)
+	elseif action.id == f.actions.next_round_id then
+		msg.post("#", next_action_event, { delay = 1 })
+	end
+end
 
 local function next_fight_action(self)
-	action = f.next()
-	
-	local active
-	--if action.id==0 then
-	active = self.fighter
-	print("COSTS! To attack it will be", action.action.cost)
-	msg.post(active, e.EVENTS.USE_STAMINA, { amount = action.action.cost })
-		msg.post(active, e.EVENTS.PREPARE, action)
-		msg.post(interface_url, e.EVENTS.SHOW_COUNTER, action)
-	--else
-	--	active = self.player
-	--	msg.post(active, e.EVENTS.PREPARE)
-	--end
+	local player_fight = msg.url(self.player.socket, self.player.path, "char_fight")
+	local enemy_fight = msg.url(self.fighter.socket, self.fighter.path, "char_fight")
+	self.round = f.next({
+		health = go.get(player_fight, "health"),
+		stamina = go.get(player_fight, "stamina")
+	}, {
+		health = go.get(enemy_fight, "health"),
+		stamina = go.get(enemy_fight, "stamina")
+	})
 
+	print("Trying to settle new action", self.round, self.round.round, self.round.actions)
+	msg.post(interface_url, e.EVENTS.SHOW_ROUND, { round = self.round.round })
+	for i=1, #self.round.actions do
+		local action = self.round.actions[i]
+		process_action(self, action)
+	end
 end
 
-local function countered(self)
-	msg.post(self.player, e.EVENTS.USE_STAMINA, { amount = 1 })
-	msg.post(self.player, e.EVENTS.PERFORM, { type = "block" })
-	msg.post(self.fighter, e.EVENTS.CANCEL)
-
-	timer.delay(1, false, next_fight_action)
+local function counter_done(self, params)
+	f.send_input(f.actions.input_counter_id, params)
+	msg.post("#", next_action_event, { delay = 0.1 })
 end
 
-local function damaged(self) 
-	msg.post(self.player, e.EVENTS.USE_STAMINA, { amount = 1 })
-	msg.post(self.fighter, e.EVENTS.PERFORM, { type = action.action.anim_id })
-	msg.post(self.player, e.EVENTS.DAMAGE_RECEIVED, action)
-
-	timer.delay(1, false, next_fight_action)
+local function attack_done(self, params)
+	f.send_input(f.actions.input_attack_id, params)
+	msg.post("#", next_action_event, { delay = 0.1 })
 end
 
 local function start_fight(self)
-	print "Let the fight start!"
-	f.start(2)
+	print("Let the fight start!")
+	f.start()
 
-	timer.delay(3, false, next_fight_action)
+	msg.post("#", next_action_event, { delay = 1 })
 end
 
 function init(self)
 	self.enemies = {}
 	self.player = nil
 	self.fighter = nil
+	self.round = nil
 
 	state = discovery_state
 end
@@ -88,7 +128,6 @@ function on_message(self, message_id, message, sender)
 		self.player = message.go_id;
 		update_entity_state(self, self.player)
 	elseif message_id==e.EVENTS.ENEMY_AWAKEN then
-		print("enemy_awaken", message.go_id)
 		table.insert(self.enemies, message.go_id)
 		update_entity_state(self, message.go_id)
 	elseif message_id==e.EVENTS.DETECTED then
@@ -98,7 +137,7 @@ function on_message(self, message_id, message, sender)
 			self.fighter = message.go_id
 			update_entity_state(self, self.player)
 			update_entity_state(self, self.fighter)
-			msg.post(message.go_id, e.EVENTS.APPROACH, { position=go.get_position(self.player) })
+			msg.post(self.fighter, e.EVENTS.APPROACH, { position=go.get_position(self.player) })
 		end
 	elseif message_id==e.EVENTS.READY then
 		if message.go_id==self.fighter then
@@ -106,16 +145,21 @@ function on_message(self, message_id, message, sender)
 			local player_pos = go.get_position(self.player).x
 			local center_pos = (player_pos + go.get_position(self.fighter).x) / 2
 			local offset = center_pos - player_pos
-			print("The offset should be", offset)
-			msg.post("/camera", camera.MSG_ZOOM_TO, { zoom = fight_zoom })
+			msg.post("/camera", camera.MSG_ZOOM_TO, { zoom = self.fight_zoom })
 			msg.post("/camera", camera.MSG_FOLLOW_OFFSET, { offset = vmath.vector3(offset, 0, 0) })
 			msg.post("/interface", e.EVENTS.FIGHT)
 
 			start_fight(self)
 		end
 	elseif message_id==e.EVENTS.COUNTER_SUCCESS then
-		countered(self)
+		counter_done(self, { status = true })
 	elseif message_id==e.EVENTS.COUNTER_FAILURE then
-		damaged(self)
+		counter_done(self, { status = false, attempt = message.tried })
+	elseif message_id==e.EVENTS.ATTACK_DONE then
+		print("Attack is ready?", message, message.delay)
+		attack_done(self, { sequence = message.sequence })
+	elseif message_id==next_action_event then
+		print("Next action!", message, message.delay)
+		timer.delay(message.delay, false, next_fight_action)
 	end
 end

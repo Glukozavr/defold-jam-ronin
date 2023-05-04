@@ -24,13 +24,13 @@ function on_message(self, message_id, message, sender)
 		self.is_in_fight = true
 		print "Player: You choose violence?"
 		msg.post(".", events.msg_command_input_lock)
-	elseif message_id==e.EVENTS.DAMAGE_RECEIVED then
-		print("Player: Ouch!", message.action, message.action.damage)
 	elseif message_id == events.msg_command_action then
 		msg.post(".", events.msg_command_input_lock)
 	elseif message_id == events.msg_command_action_completed then
 		if not self.is_in_fight then
 			msg.post(".", events.msg_command_input_unlock)
 		end
+	elseif message_id == e.EVENTS.DIE then
+		-- game end logic
 	end
 end

@@ -27,7 +27,14 @@ local function update_stats(self)
 	})
 end
 
+function init(self)
+	self.dead = false
+end
+
 function on_message(self, message_id, message, sender)
+	if self.dead then
+		return
+	end
 	if message_id==e.EVENTS.DISCOVERY then
 		self.in_fight = false
 		msg.post(".", events.msg_command_hide_stats)
@@ -36,21 +43,24 @@ function on_message(self, message_id, message, sender)
 		update_stats(self)
 		msg.post(".", events.msg_command_show_stats)
 	elseif message_id==e.EVENTS.PERFORM then
-		print("Got a request", message, message.type)
-		msg.post(".", events.msg_command_action, message)
+		msg.post(".", events.msg_command_action, { id = message.id })
 	elseif message_id==e.EVENTS.PREPARE then
-		if message.action.anim_id=="attack" then
-			msg.post(".", events.msg_command_action, { type = "prepare" })
-		end
+		msg.post(".", events.msg_command_action, { id = "prepare" })
 	elseif message_id==e.EVENTS.CANCEL then
-		print("Lucky!")
 		msg.post(".", events.msg_command_action_completed)
 	elseif message_id==e.EVENTS.DAMAGE_RECEIVED then
-		self.health = self.health - message.action.damage;
+		self.health = self.health - message.amount;
 		update_stats(self)
-		msg.post(".", events.msg_command_action, { type = "damage" })
+		msg.post(".", events.msg_command_action, { id = "damage" })
 	elseif message_id==e.EVENTS.USE_STAMINA then
 		self.stamina = self.stamina - message.amount;
 		update_stats(self)
+	elseif message_id==e.EVENTS.RESET_STAMINA then
+		self.stamina = self.max_stamina;
+		update_stats(self)
+	elseif message_id == e.EVENTS.DIE then
+		msg.post(".", events.msg_command_hide_stats)
+		msg.post(".", events.msg_command_action, { id = "die" })
+		self.dead = true
 	end
 end
