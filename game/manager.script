@@ -1,4 +1,4 @@
--- Manager or game manager Logic
+-- ! Manager or game manager Logic
 
 -- Manager is responsible for keeping the game state and do transitions
 -- For example, turn on discovery mode on start and battle mode on detection
@@ -15,6 +15,7 @@ local discovery_state = hash("discovery")
 local fight_state = hash("fight")
 local state = discovery_state
 local next_action_event = hash("next_fight_action")
+local sound_manager = hash("/sound")
 
 go.property("discovery_zoom", 3)
 go.property("fight_zoom", 3.5)
@@ -49,23 +50,32 @@ local function process_action(self, action)
 		msg.post(char, e.EVENTS.USE_STAMINA, { amount = action.value })
 	elseif action.id == f.actions.damage_id then
 		msg.post(char, e.EVENTS.DAMAGE_RECEIVED, { amount = action.value })
+		msg.post(sound_manager, e.EVENTS.PLAY_SOUND, { id = "damage" })
 	elseif action.id == f.actions.reset_stamina_id then
 		msg.post(char, e.EVENTS.RESET_STAMINA)
 	elseif action.id == f.actions.fail_id then
 		msg.post(char, e.EVENTS.CANCEL)
 	elseif action.id == f.actions.attack_id then
 		msg.post(char, e.EVENTS.PERFORM, { id = "attack" })
+		msg.post(sound_manager, e.EVENTS.PLAY_SOUND, { id = "attack" })
 	elseif action.id == f.actions.prepare_id then
 		msg.post(char, e.EVENTS.PREPARE)
 	elseif action.id == f.actions.counter_id then
 		msg.post(char, e.EVENTS.PERFORM, { id = "block" })
+		msg.post(sound_manager, e.EVENTS.PLAY_SOUND, { id = "block" })
 	elseif action.id == f.actions.die_id then
 		msg.post(char, e.EVENTS.DIE)
+		msg.post(sound_manager, e.EVENTS.PLAY_SOUND, { id = "die" })
+		if char == self.player then
+			msg.post(interface_url, e.EVENTS.GAME_OVER)
+			timer.delay(3, true, sys.reboot)
+		end
 	elseif action.id == f.actions.input_attack_id then
-		msg.post(interface_url, e.EVENTS.SHOW_ATTACK, { stamina = action.value, delay = 1 })
+		msg.post(interface_url, e.EVENTS.SHOW_ATTACK, { stamina = action.stamina, delay = action.delay })
 	elseif action.id == f.actions.input_counter_id then
-		msg.post(interface_url, e.EVENTS.SHOW_COUNTER, { action = action.sequence, delay = 1 })
+		msg.post(interface_url, e.EVENTS.SHOW_COUNTER, { action = action.sequence, delay = action.delay, stamina = action.stamina })
 	elseif action.id == f.actions.finish_id then
+		msg.post(self.player, e.EVENTS.RESET_STAMINA)
 		state = discovery_state
 		update_entity_state(self, self.player)
 		update_entity_state(self, self.fighter)
@@ -73,6 +83,7 @@ local function process_action(self, action)
 		msg.post("/camera", camera.MSG_ZOOM_TO, { zoom = self.discovery_zoom })
 		msg.post("/camera", camera.MSG_FOLLOW_OFFSET, { offset = vmath.vector3(0, 0, 0) })
 		msg.post("/interface", e.EVENTS.DISCOVERY)
+		msg.post(sound_manager, e.EVENTS.PLAY_MUSIC, { id = "discovery" })
 	elseif action.id == f.actions.next_round_id then
 		msg.post("#", next_action_event, { delay = 1 })
 	end
@@ -81,6 +92,7 @@ end
 local function next_fight_action(self)
 	local player_fight = msg.url(self.player.socket, self.player.path, "char_fight")
 	local enemy_fight = msg.url(self.fighter.socket, self.fighter.path, "char_fight")
+	print ("Next set of actionw with params for enemy", go.get(enemy_fight, "health"), " and player", go.get(player_fight, "health"))
 	self.round = f.next({
 		health = go.get(player_fight, "health"),
 		stamina = go.get(player_fight, "stamina")
@@ -109,7 +121,9 @@ end
 
 local function start_fight(self)
 	print("Let the fight start!")
-	f.start()
+	local char_enemy = msg.url(self.fighter.socket, self.fighter.path, "char_enemy")
+	local enemy_level = go.get(char_enemy, "level")
+	f.start(enemy_level)
 
 	msg.post("#", next_action_event, { delay = 1 })
 end
@@ -121,6 +135,7 @@ function init(self)
 	self.round = nil
 
 	state = discovery_state
+	msg.post(sound_manager, e.EVENTS.PLAY_MUSIC, { id = "discovery" })
 end
 
 function on_message(self, message_id, message, sender)
@@ -133,6 +148,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id==e.EVENTS.DETECTED then
 		if is_enemy_legit(self, self.enemies, message.go_id) and state==discovery_state then
 			print("That won't be pretty...")
+			msg.post(sound_manager, e.EVENTS.PLAY_MUSIC, { id = "fight" })
 			state = fight_state
 			self.fighter = message.go_id
 			update_entity_state(self, self.player)

@@ -2,9 +2,10 @@
 
 -- ! Configuration parameters
 go.property("fight_distance", 50)
+go.property("level", 1)
 
 -- ! GO State properties
-go.property("dest_position_x", nil)
+go.property("dest_position_x", vmath.vector3())
 go.property("is_approaching", false)
 
 
@@ -12,7 +13,6 @@ go.property("is_approaching", false)
 local manager = hash("/managers/manager")
 local msg_colision_response = hash("collision_response")
 local player_group = hash("player")
-local go_id
 
 -- ! Load require components
 local events = require "game.characters.char_events"
@@ -30,9 +30,9 @@ end
 
 function init(self)
 	self.detected = false
-	go_id = msg.url('.')
-	print("Enemy: I am just a background for your story, eh?", go_id)
-	msg.post(manager, e.EVENTS.ENEMY_AWAKEN, { go_id = go_id })
+	self.go_id = msg.url('.')
+	print("Enemy: I am just a background for your story, eh?", self.go_id)
+	msg.post(manager, e.EVENTS.ENEMY_AWAKEN, { go_id = self.go_id })
 end
 
 function update(self, dt)
@@ -50,7 +50,7 @@ function update(self, dt)
 			-- stop
 			self.is_approaching = false
 			msg.post(".", events.msg_command_walk, { value = 0 })
-			msg.post(manager, e.EVENTS.READY, { go_id = go_id })
+			msg.post(manager, e.EVENTS.READY, { go_id = self.go_id })
 		end
 	end
 end
@@ -66,7 +66,7 @@ function on_message(self, message_id, message, sender)
 		if (not self.detected and message.other_group == player_group) then
 			self.detected = true
 			print("Enemy: I will get you!")
-			msg.post(manager, e.EVENTS.DETECTED, { go_id = go_id })
+			msg.post(manager, e.EVENTS.DETECTED, { go_id = self.go_id })
 		end
 	end
 end

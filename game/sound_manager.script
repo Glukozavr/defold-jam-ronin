@@ -1,0 +1,48 @@
+-- ! Sound management
+
+-- As simple as it gets done in the last hour of the game development
+local e = require "game.events"
+
+local music_discovery = "#music_discovery"
+local music_fight = "#music_fight"
+local sound_attack = "#sound_attack"
+local sound_block = "#sound_block"
+local sound_damage = "#sound_damage"
+local sound_die = "#sound_die"
+local sound_step = "#sound_step"
+local sound_game_over = "#sound_game_over"
+local sound_victory = "#sound_victory"
+
+function init(self)
+	print("The sound is now here")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id==e.EVENTS.PLAY_MUSIC then
+		print("Music is requested", message.id)
+		if message.id=="fight" then
+			sound.play(music_fight)
+			sound.stop(music_discovery)
+		else
+			sound.play(music_discovery)
+			sound.stop(music_fight)
+		end
+	elseif message_id==e.EVENTS.PLAY_SOUND then
+		print("Sound is requested", message_id, message.id)
+		if message.id=="attack" then
+			sound.play(sound_attack)
+		elseif message.id=="block" then
+			sound.play(sound_block)
+		elseif message.id=="damage" then
+			sound.play(sound_damage)
+		elseif message.id=="die" then
+			sound.play(sound_die)
+		elseif message.id=="step" then
+			sound.play(sound_step)
+		elseif message.id=="game_over" then
+			sound.play(sound_game_over)
+		elseif message.id=="victory" then
+			sound.play(sound_victory)
+		end
+	end
+end

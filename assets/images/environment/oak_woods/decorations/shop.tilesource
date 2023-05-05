@@ -1,0 +1,20 @@
+image: "/assets/images/environment/oak_woods/decorations/shop_anim.png"
+tile_width: 118
+tile_height: 128
+tile_margin: 0
+tile_spacing: 0
+collision: ""
+material_tag: "tile"
+collision_groups: "default"
+animations {
+  id: "idle"
+  start_tile: 1
+  end_tile: 6
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 12
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+extrude_borders: 2
+inner_padding: 0
+sprite_trim_mode: SPRITE_TRIM_MODE_OFF

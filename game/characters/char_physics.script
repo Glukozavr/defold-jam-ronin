@@ -21,10 +21,13 @@ go.property("wall_contact", false)
 
 -- ! Load require components
 local events = require "game.characters.char_events"
+local e = require "game.events"
 
 -- ! Pre-hashing ids improves performance
 local group_obstacle = hash("ground")
 local msg_contact_point_response = hash("contact_point_response")
+local sound_manager = hash("/sound")
+local step_sound_delay = 0.4
 
 function init(self)
 	-- initial player velocity
@@ -33,6 +36,7 @@ function init(self)
 	self.correction = vmath.vector3()
 	-- if the player stands on ground or not
 	self.ground_contact = false
+	self.step_time_left = 0;
 end
 
 function update(self, dt)
@@ -44,7 +48,19 @@ function update(self, dt)
 	pos = pos + self.velocity * dt
 	go.set_position(pos)
 
-	msg.post(".", events.msg_command_update_animation, { 
+	if self.velocity.x > 0 and self.ground_contact then
+		-- play_sound
+		if self.step_time_left < 0 or self.step_time_left == 0 then
+			msg.post(sound_manager, e.EVENTS.PLAY_SOUND, { id = "step" })
+			self.step_time_left = step_sound_delay
+		else
+			self.step_time_left = self.step_time_left - dt
+		end
+	else
+		self.step_time_left = 0
+	end
+
+	msg.post(".", events.msg_command_update_animation, {
 		velocity = self.velocity,
 		ground_contact = self.ground_contact,
 		wall_contact = self.wall_contact,

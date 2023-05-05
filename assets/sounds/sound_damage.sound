@@ -1,0 +1,7 @@
+sound: "/assets/sounds/RPG_Essentials_Free/10_Battle_SFX/15_Impact_flesh_02.wav"
+looping: 0
+group: "sounds"
+gain: 1.0
+pan: 0.0
+speed: 1.0
+loopcount: 0

@@ -1,7 +1,5 @@
--- Put functions in this file to use them in several other scripts.
--- To get access to the functions, you need to put:
--- require "my_directory.my_file"
--- in any script using the functions.
+-- I don't like strings, so I put them here for everybody to use in common messaging
+
 local M = {}
 M.EVENTS = {}
 
@@ -18,6 +16,7 @@ M.EVENTS.CANCEL = hash("cancel")
 M.EVENTS.USE_STAMINA = hash("use_stamina")
 M.EVENTS.RESET_STAMINA = hash("reset_stamina")
 M.EVENTS.DIE = hash("die")
+M.EVENTS.GAME_OVER = hash("game_over")
 
 M.EVENTS.PLAYER_BORN = hash("player_born")
 
@@ -28,5 +27,8 @@ M.EVENTS.READY = hash("enemy_ready")
 M.EVENTS.COUNTER_SUCCESS = hash("conter_success")
 M.EVENTS.COUNTER_FAILURE = hash("counter_failure")
 M.EVENTS.ATTACK_DONE = hash("attack_done")
+
+M.EVENTS.PLAY_MUSIC = hash("play_music")
+M.EVENTS.PLAY_SOUND = hash("play_sound_id")
 
 return M

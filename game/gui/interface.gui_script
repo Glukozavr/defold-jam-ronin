@@ -1,3 +1,7 @@
+-- ! GUI Script
+
+-- ! I really didn't bother to do it nice, was tired already
+
 local fight_presentation_duration_cape = 2
 
 local e = require "game.events"
@@ -14,7 +18,8 @@ local function set_action(self, action_label, action)
 	end
 end
 
-local function show_counter(self, action, delay)
+local function show_counter(self, action, delay, stamina)
+	self.stamina_limit = stamina
 	gui.set_text(self.turn_text, "counter!")
 	gui.set_enabled(self.turn_text, true)
 	set_action(self, self.fight_action_1, action[1])
@@ -27,6 +32,7 @@ local function show_counter(self, action, delay)
 end
 
 local function show_attack(self, stamina, delay)
+	self.stamina_limit = stamina
 	gui.set_text(self.turn_text, "attack!")
 	gui.set_enabled(self.turn_text, true)
 	self.attack_sequence = {}
@@ -37,15 +43,16 @@ local function show_attack(self, stamina, delay)
 end
 
 function init(self)
-	print("self.fight_presentation_duration_cape", self.fight_presentation_duration_cape)
 	self.counter_sequence = {}
 	self.attack_sequence = {}
 	self.current = 1
 	self.counter = false
 	self.attack = false
 	self.timeleft = 0;
+	self.stamina_limit = 0;
 	self.fight_presentation_active = false
 	self.fight_presentation_duration = 0
+	self.end_text = gui.get_node("end_text")
 	self.fight_text = gui.get_node("fight_text")
 	self.fight_action_1 = gui.get_node("fight_action_1")
 	self.fight_action_2 = gui.get_node("fight_action_2")
@@ -56,6 +63,7 @@ function init(self)
 	gui.set_enabled(self.fight_action_2, false)
 	gui.set_enabled(self.round_number, false)
 	gui.set_enabled(self.turn_text, false)
+	gui.set_enabled(self.end_text, false)
 end
 
 local function hide_fight(self)
@@ -75,8 +83,6 @@ local function counter_result(self, result, tried)
 		gui.set_enabled(self.fight_action_1, false)
 		gui.set_enabled(self.fight_action_2, false)
 		msg.post(".", "release_input_focus")
-
-		gui.set_enabled(self.turn_text, false)
 	end
 end
 
@@ -105,12 +111,21 @@ function on_message(self, message_id, message, sender)
 		gui.set_enabled(self.fight_text, true)		
 		timer.delay(fight_presentation_duration_cape, false, hide_fight)
 	elseif message_id==e.EVENTS.SHOW_COUNTER then
-		show_counter(self, message.action, message.delay)
+		show_counter(self, message.action, message.delay, message.stamina)
 	elseif message_id==e.EVENTS.SHOW_ATTACK then
 		show_attack(self, message.stamina, message.delay)
 	elseif message_id==e.EVENTS.SHOW_ROUND then
 		gui.set_text(self.round_number, "- " .. message.round .. " -")
 		gui.set_enabled(self.round_number, true)
+	elseif message_id==e.EVENTS.DISCOVERY then
+		gui.set_enabled(self.fight_text, false)
+		gui.set_enabled(self.fight_action_1, false)
+		gui.set_enabled(self.fight_action_2, false)
+		gui.set_enabled(self.round_number, false)
+		gui.set_enabled(self.turn_text, false)
+	elseif message_id==e.EVENTS.GAME_OVER then
+		gui.set_enabled(self.end_text, true)
+		gui.set_enabled(self.fight_text, false)
 	end
 end
 
@@ -119,8 +134,9 @@ function on_input(self, action_id, action)
 		if self.counter then
 			-- counter evaluation
 			print("Player tries to block", action_id, self.counter_sequence[self.current])
-			if action_id==self.counter_sequence[self.current] then
+			if action_id==self.counter_sequence[self.current] and self.stamina_limit > 0 then
 				self.current = self.current + 1
+				self.stamina_limit = self.stamina_limit - 1
 				if self.counter_sequence[self.current]==nil then
 					counter_result(self, true)
 				end
@@ -130,23 +146,27 @@ function on_input(self, action_id, action)
 		end
 		if self.attack and f.contains(f.KEYS, action_id) then
 			-- attack evaluation
-			local is_attack = f.contains(f.ATTACK_KEYS, action_id)
-			local is_block = f.contains(f.BLOCK_KEYS, action_id)
-			print("Player tries to attack", action_id, self.current, is_attack, is_block)
-			self.attack_sequence[self.current] = action_id
-			if self.current == 1 then
-				gui.set_enabled(self.fight_action_1, true)
-				set_action(self, self.fight_action_1, action_id)
-			else
-				gui.set_enabled(self.fight_action_2, true)
-				set_action(self, self.fight_action_2, action_id)
+			if self.stamina_limit > 0 then
+				local is_attack = f.contains(f.ATTACK_KEYS, action_id)
+				local is_block = f.contains(f.BLOCK_KEYS, action_id)
+				print("Player tries to attack", action_id, self.current, is_attack, is_block)
+				self.attack_sequence[self.current] = action_id
+				if self.current == 1 then
+					gui.set_enabled(self.fight_action_1, true)
+					set_action(self, self.fight_action_1, action_id)
+				else
+					gui.set_enabled(self.fight_action_2, true)
+					set_action(self, self.fight_action_2, action_id)
 
-				attack_result(self)
-			end
-			self.current = self.current + 1
-			if is_attack or is_block then
-				attack_result(self)
+					attack_result(self)
+				end
+				self.current = self.current + 1
+				self.stamina_limit = self.stamina_limit - 1
+				if is_attack or is_block then
+					attack_result(self)
+				end
 			else
+				attack_result(self)
 			end
 		end
 	end

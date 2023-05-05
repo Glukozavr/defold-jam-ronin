@@ -42,6 +42,26 @@ components {
     z: 0.0
     w: 1.0
   }
+  properties {
+    id: "max_health"
+    value: "7.0"
+    type: PROPERTY_TYPE_NUMBER
+  }
+  properties {
+    id: "max_stamina"
+    value: "3.0"
+    type: PROPERTY_TYPE_NUMBER
+  }
+  properties {
+    id: "health"
+    value: "7.0"
+    type: PROPERTY_TYPE_NUMBER
+  }
+  properties {
+    id: "stamina"
+    value: "3.0"
+    type: PROPERTY_TYPE_NUMBER
+  }
 }
 components {
   id: "char_stats"
@@ -72,6 +92,11 @@ components {
     z: 0.0
     w: 1.0
   }
+  properties {
+    id: "level"
+    value: "2.0"
+    type: PROPERTY_TYPE_NUMBER
+  }
 }
 embedded_components {
   id: "collisionobject_body"
@@ -89,7 +114,7 @@ embedded_components {
   "    shape_type: TYPE_SPHERE\n"
   "    position {\n"
   "      x: -1.0\n"
-  "      y: -17.0\n"
+  "      y: -19.0\n"
   "      z: 0.0\n"
   "    }\n"
   "    rotation {\n"
@@ -105,7 +130,7 @@ embedded_components {
   "    shape_type: TYPE_SPHERE\n"
   "    position {\n"
   "      x: -1.0\n"
-  "      y: -1.0\n"
+  "      y: -6.0\n"
   "      z: 0.0\n"
   "    }\n"
   "    rotation {\n"
@@ -117,8 +142,8 @@ embedded_components {
   "    index: 1\n"
   "    count: 1\n"
   "  }\n"
-  "  data: 10.4075\n"
-  "  data: 5.7645\n"
+  "  data: 7.566\n"
+  "  data: 4.914\n"
   "}\n"
   "linear_damping: 0.0\n"
   "angular_damping: 0.0\n"
@@ -148,7 +173,7 @@ embedded_components {
   ""
   position {
     x: 0.0
-    y: 0.0
+    y: -5.0
     z: 0.0
   }
   rotation {
@@ -156,6 +181,11 @@ embedded_components {
     y: 0.0
     z: 0.0
     w: 1.0
+  }
+  scale {
+    x: 0.8
+    y: 0.8
+    z: 0.8
   }
 }
 embedded_components {

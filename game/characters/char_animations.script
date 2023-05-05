@@ -31,7 +31,7 @@ end
 local function play_animation(self, anim, callback)
 	-- only play animations which are not already playing
 	if self.anim ~= anim then
-		print("ANIMATE: ", self, anim)
+		--print("ANIMATE: ", self, anim)
 		-- tell the sprite to play the animation
 		sprite.play_flipbook(sprite_body, anim, callback)
 		-- remember which animation is playing
