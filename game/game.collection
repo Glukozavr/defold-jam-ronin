@@ -82,7 +82,7 @@ instances {
   prototype: "/game/characters/knight/adventurer.go"
   position {
     x: 95.0
-    y: 112.0
+    y: 108.0
     z: 0.0
   }
   rotation {
