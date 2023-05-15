@@ -16,8 +16,13 @@ instances {
   component_properties {
     id: "script"
     properties {
+      id: "near_z"
+      value: "-10.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
       id: "far_z"
-      value: "5.0"
+      value: "10.0"
       type: PROPERTY_TYPE_NUMBER
     }
     properties {
@@ -41,6 +46,11 @@ instances {
       type: PROPERTY_TYPE_HASH
     }
     properties {
+      id: "follow_lerp"
+      value: "1.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
       id: "follow_offset"
       value: "0.0, 0.0, 0.0"
       type: PROPERTY_TYPE_VECTOR3
@@ -52,7 +62,7 @@ instances {
     }
     properties {
       id: "bounds_right"
-      value: "2600.0"
+      value: "3210.0"
       type: PROPERTY_TYPE_NUMBER
     }
     properties {
@@ -71,8 +81,8 @@ instances {
   id: "adventurer"
   prototype: "/game/characters/knight/adventurer.go"
   position {
-    x: 81.0
-    y: 108.0
+    x: 95.0
+    y: 112.0
     z: 0.0
   }
   rotation {
@@ -232,6 +242,26 @@ collection_instances {
   collection: "/game/managers.collection"
   position {
     x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "village_unlimited"
+  collection: "/game/levels/village_unlimited.collection"
+  position {
+    x: 2586.0
     y: 0.0
     z: 0.0
   }

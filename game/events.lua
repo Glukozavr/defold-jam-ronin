@@ -31,4 +31,7 @@ M.EVENTS.ATTACK_DONE = hash("attack_done")
 M.EVENTS.PLAY_MUSIC = hash("play_music")
 M.EVENTS.PLAY_SOUND = hash("play_sound_id")
 
+M.EVENTS.PORTAL_READY = hash("portal_ready")
+M.EVENTS.SPAWN_NOW = hash("spawn_now")
+
 return M

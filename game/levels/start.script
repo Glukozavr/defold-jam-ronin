@@ -1,0 +1,15 @@
+-- A simple trigger to spawn an enemy
+
+local e = require "game.events"
+
+local msg_colision_response = hash("collision_response")
+local player_group = hash("player")
+local controller = "controller"
+
+function on_message(self, message_id, message, sender)
+	if message_id == msg_colision_response then
+		if message.other_group == player_group then
+			msg.post(controller, e.EVENTS.SPAWN_NOW)
+		end
+	end
+end

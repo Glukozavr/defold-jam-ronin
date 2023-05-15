@@ -1,5 +1,5 @@
 [project]
-title = Fight Shadow High
+title = Shadow Fight
 developer = gkzr.me
 dependencies#0 = https://github.com/britzl/defold-orthographic/archive/refs/tags/3.2.1.zip
 dependencies#1 = https://github.com/Insality/druid/archive/master.zip
@@ -47,8 +47,16 @@ shared_state = 1
 [physics]
 gravity_y = -1000.0
 scale = 0.01
+use_fixed_timestep = 1
 
 [graphics]
 default_texture_min_filter = nearest
 default_texture_mag_filter = nearest
+
+[tilemap]
+max_tile_count = 4096
+
+[html5]
+scale_mode = downscale_fit
+splash_image = /assets/Banner.png
 

@@ -12819,14 +12819,6 @@ layers {
     rotate90: 0
   }
   cell {
-    x: 162
-    y: -4
-    tile: 67
-    h_flip: 0
-    v_flip: 0
-    rotate90: 0
-  }
-  cell {
     x: 124
     y: -3
     tile: 31
@@ -13118,14 +13110,6 @@ layers {
     x: 161
     y: -3
     tile: 33
-    h_flip: 0
-    v_flip: 0
-    rotate90: 0
-  }
-  cell {
-    x: 162
-    y: -3
-    tile: 67
     h_flip: 0
     v_flip: 0
     rotate90: 0
@@ -13427,14 +13411,6 @@ layers {
     rotate90: 0
   }
   cell {
-    x: 162
-    y: -2
-    tile: 67
-    h_flip: 0
-    v_flip: 0
-    rotate90: 0
-  }
-  cell {
     x: 124
     y: -1
     tile: 31
@@ -13726,14 +13702,6 @@ layers {
     x: 161
     y: -1
     tile: 33
-    h_flip: 0
-    v_flip: 0
-    rotate90: 0
-  }
-  cell {
-    x: 162
-    y: -1
-    tile: 67
     h_flip: 0
     v_flip: 0
     rotate90: 0
@@ -14035,14 +14003,6 @@ layers {
     rotate90: 0
   }
   cell {
-    x: 162
-    y: 0
-    tile: 67
-    h_flip: 0
-    v_flip: 0
-    rotate90: 0
-  }
-  cell {
     x: 124
     y: 1
     tile: 31
@@ -14339,14 +14299,6 @@ layers {
     rotate90: 0
   }
   cell {
-    x: 162
-    y: 1
-    tile: 67
-    h_flip: 0
-    v_flip: 0
-    rotate90: 0
-  }
-  cell {
     x: 124
     y: 2
     tile: 31
@@ -14629,7 +14581,7 @@ layers {
   cell {
     x: 160
     y: 2
-    tile: 467
+    tile: 32
     h_flip: 0
     v_flip: 0
     rotate90: 0
@@ -14637,15 +14589,7 @@ layers {
   cell {
     x: 161
     y: 2
-    tile: 465
-    h_flip: 0
-    v_flip: 0
-    rotate90: 0
-  }
-  cell {
-    x: 162
-    y: 2
-    tile: 67
+    tile: 32
     h_flip: 0
     v_flip: 0
     rotate90: 0
@@ -14925,7 +14869,7 @@ layers {
   cell {
     x: 159
     y: 3
-    tile: 594
+    tile: 32
     h_flip: 0
     v_flip: 0
     rotate90: 0
@@ -14933,7 +14877,7 @@ layers {
   cell {
     x: 160
     y: 3
-    tile: 417
+    tile: 32
     h_flip: 0
     v_flip: 0
     rotate90: 0
@@ -14941,15 +14885,7 @@ layers {
   cell {
     x: 161
     y: 3
-    tile: 418
-    h_flip: 0
-    v_flip: 0
-    rotate90: 0
-  }
-  cell {
-    x: 162
-    y: 3
-    tile: 67
+    tile: 32
     h_flip: 0
     v_flip: 0
     rotate90: 0
@@ -15254,14 +15190,6 @@ layers {
     x: 161
     y: 4
     tile: 2
-    h_flip: 0
-    v_flip: 0
-    rotate90: 0
-  }
-  cell {
-    x: 162
-    y: 4
-    tile: 5
     h_flip: 0
     v_flip: 0
     rotate90: 0

@@ -420,7 +420,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "SHADOW HIGH FIGHT!\n"
+  text: "SHADOW FIGHT!\n"
   ""
   font: "joystix_monospace"
   id: "logo_text"

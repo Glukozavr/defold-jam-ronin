@@ -1,0 +1,42 @@
+-- A simple controller to teleport and spawn an enemy
+
+local e = require "game.events"
+
+local is_spawned = false
+local is_teleported = true
+local spawn_go = "spawn"
+local spawn_factory = "spawn#shadow_factory"
+local start = "start"
+
+local function teleport(player_id)
+	if is_teleported then
+		return
+	end
+	print("Controller: I will be teleporting as soon as possible", player_id)
+	-- teleport to start
+	go.set_position(go.get_world_position(start), player_id)
+	is_teleported = true
+	is_spawned = false
+end
+
+local function spawn()
+	if is_spawned then
+		return
+	end
+	print("Controller: I will be spawning now", spawn_factory)
+	-- spawn an enemy at spawn
+	local p = go.get_world_position(spawn_go)
+	factory.create(spawn_factory, p)
+	is_spawned = true
+	is_teleported = false
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == e.EVENTS.PORTAL_READY then
+		-- teleport message.go_id
+		teleport(message.go_id)
+	elseif message_id == e.EVENTS.SPAWN_NOW then
+		-- spawn
+		spawn()
+	end
+end
